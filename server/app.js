@@ -6,6 +6,7 @@
 
 import express from 'express';
 import mongoose from 'mongoose';
+import easyrtc from 'easyrtc'
 mongoose.Promise = require('bluebird');
 import config from './config/environment';
 import http from 'http';
@@ -30,6 +31,40 @@ var socketio = require('socket.io')(server, {
 require('./config/socketio').default(socketio);
 require('./config/express').default(app);
 require('./routes').default(app);
+
+// easyRTC
+easyrtc.setOption("logLevel", "debug");
+// Overriding the default easyrtcAuth listener, only so we can directly access its callback
+easyrtc.events.on("easyrtcAuth", function(socket, easyrtcid, msg, socketCallback, callback) {
+    easyrtc.events.defaultListeners.easyrtcAuth(socket, easyrtcid, msg, socketCallback, function(err, connectionObj){
+        if (err || !msg.msgData || !msg.msgData.credential || !connectionObj) {
+            callback(err, connectionObj);
+            return;
+        }
+
+        connectionObj.setField("credential", msg.msgData.credential, {"isShared":false});
+
+        console.log("["+easyrtcid+"] Credential saved!", connectionObj.getFieldValueSync("credential"));
+
+        callback(err, connectionObj);
+    });
+});
+// To test, lets print the credential to the console for every room join!
+easyrtc.events.on("roomJoin", function(connectionObj, roomName, roomParameter, callback) {
+    console.log("["+connectionObj.getEasyrtcid()+"] Credential retrieved!", connectionObj.getFieldValueSync("credential"));
+    easyrtc.events.defaultListeners.roomJoin(connectionObj, roomName, roomParameter, callback);
+});
+// Start EasyRTC server
+var rtc = easyrtc.listen(app, socketio, null, function(err, rtcRef) {
+    console.log("Initiated");
+
+    rtcRef.events.on("roomCreate", function(appObj, creatorConnectionObj, roomName, roomOptions, callback) {
+        console.log("roomCreate fired! Trying to create: " + roomName);
+
+        appObj.events.defaultListeners.roomCreate(appObj, creatorConnectionObj, roomName, roomOptions, callback);
+    });
+});
+
 
 // Start server
 function startServer() {
