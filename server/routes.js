@@ -18,6 +18,9 @@ export default function(app) {
   app.route('/:url(api|auth|components|app|bower_components|assets)/*')
    .get(errors[404]);
 
+  app.route('/rtc')
+    .get((req, res) => { res.sendFile(path.resolve(app.get('appPath') + '/rtc.html')); }) 
+
   // All other routes should redirect to the index.html
   app.route('/*')
     .get((req, res) => {
