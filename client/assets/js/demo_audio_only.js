@@ -73,6 +73,7 @@ function clearConnectList() {
 
 function convertListToButtons (roomName, occupants, isPrimary) {
     clearConnectList();
+    console.log('IN convertListToButtons: ROONNAME: ', roomName)
     var otherClientDiv = document.getElementById('otherClients');
     for(var easyrtcid in occupants) {
         var button = document.createElement('button');
