@@ -37,8 +37,10 @@ export default function(app) {
   app.use(morgan('dev'));
 
   app.set('views', config.root + '/server/views');
-  app.engine('html', require('ejs').renderFile);
-  app.set('view engine', 'html');
+  //app.engine('html', require('ejs').renderFile);
+  //app.set('view engine', 'html');
+  app.engine('ejs', require('ejs').renderFile);
+  app.set('view engine', 'ejs');
   app.use(compression());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
