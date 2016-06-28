@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<% include ../partials/head %>
+</head>
+<body>
+	<script type="text/javascript">
+		// function called when student connects successfully
+		function loginSuccess(easyrtcId){
+			var whoAmI = document.getElementById("whoami");
+			whoAmI.innerHTML = "I am " + easyrtcId;
+		}
+
+		// function called when student's attempt to connect fails
+		function loginFailure(errorCode, message){
+			easyrtc.showError(errorCode, message);
+		}
+
+		function seeOtherDisabledStudents(roomName, occupants, isPrimary){
+			var otherStudents = document.getElementById("other-students");
+			occupants.forEach(function(occupant, index){
+				// TODO: make disabled
+				otherStudents.append("<li>" + occupant + "</li>")
+			});
+		}
+
+		var makeCallBtn = document.getElementById("make-call-button");
+		makeCallBtn.click = function(e){
+			// audio only
+			easyrtc.enableVideo(false);
+    		easyrtc.enableVideoReceive(false);
+    		// commented out because we don't care about other students in the room for now
+    		//easyrtc.setRoomOccupantListener(convertListToButtons);
+    		easyrtc.initMediaSource(
+        		function(){        // success callback
+            		easyrtc.connect("easyrtc.audioOnly", loginSuccess, loginFailure);
+        		},
+       	 		function(errorCode, errmesg){
+            		easyrtc.showError(errorCode, errmesg);
+        		}	// failure callback
+        	);
+		};
+	</script>
+	<header>
+		<% include ../partials/header %>
+	</header>
+
+	<main style="min-height:600px;margin-top:100px;">
+		<div class="make-call-button">
+			<button name="make-call" id="make-call-button">Contact Lecturer</button>
+		</div>
+		<div class="" id="whoami">
+			
+		</div>
+
+		<div id="other-students-container" class="other-students-container">
+			<ul id="other-students">
+
+			</ul>
+		</div>
+
+	</main>
+
+	<footer>
+		<% include ../partials/footer %>
+	</footer>
+
+</body>
+
+</html>
