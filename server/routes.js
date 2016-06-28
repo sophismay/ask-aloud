@@ -22,8 +22,8 @@ export default function(app) {
 
   app.route('/rtc')
     .get((req, res) => { 
-    //res.sendFile(path.resolve(app.get('appPath') + '/rtc.html')); 
-    res.render('pages/index')
+    res.sendFile(path.resolve(app.get('appPath') + '/rtc.html')); 
+    //res.render('pages/index')
   }) 
 
   // All other routes should redirect to the index.html
