@@ -7,7 +7,7 @@
 import express from 'express';
 //import mongoose from 'mongoose';
 import easyrtc from 'easyrtc'
-//mongoose.Promise = require('bluebird');
+mongoose.Promise = require('bluebird');
 import config from './config/environment';
 import http from 'http';
 

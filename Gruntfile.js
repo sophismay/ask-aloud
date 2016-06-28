@@ -81,16 +81,16 @@ module.exports = function(grunt) {
       },
       jsTest: {
         files: ['<%= yeoman.client %>/{app,components}/**/*.{spec,mock}.js'],
-        tasks: ['newer:jshint:all', 'wiredep:test', 'karma']
+        tasks: ['newer:jshint:all', /*'wiredep:test',*/ 'karma']
       },
-      injectLess: {
-        files: ['<%= yeoman.client %>/{app,components}/**/*.less'],
-        tasks: ['injector:less']
-      },
-      less: {
-        files: ['<%= yeoman.client %>/{app,components}/**/*.less'],
-        tasks: ['less', 'postcss']
-      },
+      //injectLess: {
+      //  files: ['<%= yeoman.client %>/{app,components}/**/*.less'],
+      //  tasks: ['injector:less']
+      //},
+      //less: {
+      //  files: ['<%= yeoman.client %>/{app,components}/**/*.less'],
+      //  tasks: ['less', 'postcss']
+      //},
       gruntfile: {
         files: ['Gruntfile.js']
       },
@@ -114,7 +114,7 @@ module.exports = function(grunt) {
       },
       bower: {
         files: ['bower.json'],
-        tasks: ['wiredep']
+        //tasks: ['wiredep']
       },
     },
 
@@ -224,7 +224,7 @@ module.exports = function(grunt) {
     },
 
     // Automatically inject Bower components into the app and karma.conf.js
-    wiredep: {
+    /*wiredep: {
       options: {
         exclude: [
           /bootstrap.js/,
@@ -235,14 +235,14 @@ module.exports = function(grunt) {
         ]
       },
       client: {
-        src: '<%= yeoman.client %>/index.html',
-        ignorePath: '<%= yeoman.client %>/',
+        //src: '<%= yeoman.client %>/index.html',
+        //ignorePath: '<%= yeoman.client %>/',
       },
       test: {
         src: './karma.conf.js',
         devDependencies: true
       }
-    },
+    },*/
 
     // Renames files for browser caching purposes
     filerev: {
@@ -257,12 +257,12 @@ module.exports = function(grunt) {
     // Reads HTML for usemin blocks to enable smart builds that automatically
     // concat, minify and revision files. Creates configurations in memory so
     // additional tasks can operate on them
-    useminPrepare: {
-      html: ['<%= yeoman.client %>/index.html'],
-      options: {
-        dest: '<%= yeoman.dist %>/<%= yeoman.client %>'
-      }
-    },
+    //useminPrepare: {
+    //  html: ['<%= yeoman.client %>/index.html'],
+    //  options: {
+    //    dest: '<%= yeoman.dist %>/<%= yeoman.client %>'
+    //  }
+    //},
 
     // Performs rewrites based on rev and the useminPrepare configuration
     usemin: {
@@ -376,10 +376,10 @@ module.exports = function(grunt) {
           src: [
             '*.{ico,png,txt}',
             '.htaccess',
-            'bower_components/**/*',
+            //'bower_components/**/*',
             'assets/images/{,*/}*.{webp}',
             'assets/fonts/**/*',
-            'index.html'
+            //'index.html'
           ]
         }, {
           expand: true,
@@ -429,16 +429,16 @@ module.exports = function(grunt) {
     // Run some tasks in parallel to speed up the build process
     concurrent: {
       pre: [
-        'injector:less',
+        //'injector:less',
         'ngconstant'
       ],
       server: [
-        'newer:babel:client',
-        'less',
+        'newer:babel:client'
+      //  'less',
       ],
       test: [
-        'newer:babel:client',
-        'less',
+        'newer:babel:client'
+        //'less',
       ],
       debug: {
         tasks: [
@@ -451,7 +451,7 @@ module.exports = function(grunt) {
       },
       dist: [
         'newer:babel:client',
-        'less',
+        //'less',
         'imagemin'
       ]
     },
@@ -571,7 +571,7 @@ module.exports = function(grunt) {
     },
 
     // Compiles Less to CSS
-    less: {
+    /*less: {
       options: {
         sourceMap: true,
         sourceMapFileInline: true
@@ -581,7 +581,7 @@ module.exports = function(grunt) {
           '.tmp/app/app.css' : '<%= yeoman.client %>/app/app.less'
         }
       }
-    },
+    },*/
 
     injector: {
       options: {},
@@ -605,53 +605,53 @@ module.exports = function(grunt) {
           endtag: '<!-- endinjector -->'
         },
         files: {
-          '<%= yeoman.client %>/index.html': [
-               [
-                 '<%= yeoman.client %>/{app,components}/**/!(*.spec|*.mock).js',
-                 '!{.tmp,<%= yeoman.client %>}/app/app.{js,ts}'
-               ]
-            ]
+          //'<%= yeoman.client %>/index.html': [
+          //     [
+          //       '<%= yeoman.client %>/{app,components}/**/!(*.spec|*.mock).js',
+          //       '!{.tmp,<%= yeoman.client %>}/app/app.{js,ts}'
+          //     ]
+          //  ]
         }
       },
 
       // Inject component less into app.less
-      less: {
-        options: {
-          transform: function(filePath) {
-            var yoClient = grunt.config.get('yeoman.client');
-            filePath = filePath.replace('/' + yoClient + '/app/', '');
-            filePath = filePath.replace('/' + yoClient + '/components/', '../components/');
-            return '@import \'' + filePath + '\';';
-          },
-          starttag: '/* inject:less */',
-          endtag: '/* endinject */'
-        },
-        files: {
-          '<%= yeoman.client %>/app/app.less': [
-            '<%= yeoman.client %>/{app,components}/**/*.less',
-            '!<%= yeoman.client %>/app/app.less'
-          ]
-        }
-      },
+      // less: {
+      //   options: {
+      //     transform: function(filePath) {
+      //       var yoClient = grunt.config.get('yeoman.client');
+      //       filePath = filePath.replace('/' + yoClient + '/app/', '');
+      //       filePath = filePath.replace('/' + yoClient + '/components/', '../components/');
+      //       return '@import \'' + filePath + '\';';
+      //     },
+      //     starttag: '/* inject:less */',
+      //     endtag: '/* endinject */'
+      //   },
+      //   files: {
+      //     '<%= yeoman.client %>/app/app.less': [
+      //       '<%= yeoman.client %>/{app,components}/**/*.less',
+      //       '!<%= yeoman.client %>/app/app.less'
+      //     ]
+      //   }
+      // },
 
       // Inject component css into index.html
-      css: {
-        options: {
-          transform: function(filePath) {
-            var yoClient = grunt.config.get('yeoman.client');
-            filePath = filePath.replace('/' + yoClient + '/', '');
-            filePath = filePath.replace('/.tmp/', '');
-            return '<link rel="stylesheet" href="' + filePath + '">';
-          },
-          starttag: '<!-- injector:css -->',
-          endtag: '<!-- endinjector -->'
-        },
-        files: {
-          '<%= yeoman.client %>/index.html': [
-            '<%= yeoman.client %>/{app,components}/**/*.css'
-          ]
-        }
-      }
+      // css: {
+      //   options: {
+      //     transform: function(filePath) {
+      //       var yoClient = grunt.config.get('yeoman.client');
+      //       filePath = filePath.replace('/' + yoClient + '/', '');
+      //       filePath = filePath.replace('/.tmp/', '');
+      //       return '<link rel="stylesheet" href="' + filePath + '">';
+      //     },
+      //     starttag: '<!-- injector:css -->',
+      //     endtag: '<!-- endinjector -->'
+      //   },
+      //   files: {
+      //     '<%= yeoman.client %>/index.html': [
+      //       '<%= yeoman.client %>/{app,components}/**/*.css'
+      //     ]
+      //   }
+      // }
     },
   });
 
@@ -683,7 +683,7 @@ module.exports = function(grunt) {
         'concurrent:pre',
         'concurrent:server',
         'injector',
-        'wiredep:client',
+        //'wiredep:client',
         'postcss',
         'concurrent:debug'
       ]);
@@ -695,7 +695,7 @@ module.exports = function(grunt) {
       'concurrent:pre',
       'concurrent:server',
       'injector',
-      'wiredep:client',
+      //'wiredep:client',
       'postcss',
       'express:dev',
       'wait',
@@ -725,7 +725,7 @@ module.exports = function(grunt) {
         'concurrent:test',
         'injector',
         'postcss',
-        'wiredep:test',
+        //'wiredep:test',
         'karma'
       ]);
     } else if(target === 'e2e') {
@@ -745,7 +745,7 @@ module.exports = function(grunt) {
           'concurrent:pre',
           'concurrent:test',
           'injector',
-          'wiredep:client',
+          //'wiredep:client',
           'postcss',
           'express:dev',
           'protractor'
@@ -789,7 +789,7 @@ module.exports = function(grunt) {
     'concurrent:pre',
     'concurrent:dist',
     'injector',
-    'wiredep:client',
+    //'wiredep:client',
     'useminPrepare',
     'postcss',
     'ngtemplates',
