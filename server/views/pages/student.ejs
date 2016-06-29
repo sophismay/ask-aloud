@@ -42,7 +42,8 @@
 			console.log("local storage: ", localStorage.getItem("SELF_ID"));
 
 			// get rooms in application
-			getRooms(5000);
+			getRooms();
+
 		}
 
 		// function called when student's attempt to connect fails
@@ -51,8 +52,15 @@
 		}
 
 		function getRoomListSuccess(roomList){
+			// now list rooms in view
+          	var rooms = document.getElementById("rooms");
+          	rooms.innerHTML = '';
 		  	for(roomName in roomList) {
             	console.log("saw room " + roomName);
+            	var li = document.createElement("li");
+            	var text = document.createTextNode(roomName);
+            	li.appendChild(text);
+            	rooms.appendChild(li);
           	}
           	console.log("room list: ", roomList);
 		}
@@ -124,6 +132,48 @@
 
 			</ul>
 		</div>
+
+		<div id="rooms-container" class="rooms-container">
+			<ul id="rooms">
+
+			</ul>
+		</div>
+
+		<div class="sponsor-content-bg">
+    	  <div class="container">
+        	<div class="content-col-container">
+              <div class="content-header">
+                <h4> Current Rooms</h4>
+              </div>
+              <div class="container">
+              	<div class="event-article col-md-3" style="margin-left: 20px;">
+                    <div class="event-article-header red-header">
+                        <h5>Category</h5>
+                    </div>
+                    <div class="event-article-img">
+                        <img src="assets/images/default.png" alt=""/>
+                    </div>
+                    <div class="event-article-title">
+                        <h4> Room Name Goes Here</h4>
+                    </div>
+                    <div class="event-article-content">
+                        <p>
+                            Some random words to make you join this room
+                            Furthermore, we really need you to come in your numbers
+                        </p>
+                    </div>
+                    <div class="event-article-extras">
+                        <button class="btn btn-sm btn-default">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Join
+                        </button>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
 
 	</main>
 

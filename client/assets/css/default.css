@@ -472,3 +472,18 @@ img.bg {
     -o-transition-property: left, right, top;
     transition-property: left, right, top;
 }
+
+.rooms-container{
+    padding: 5px;
+    box-shadow: 0px 1px 1px rgba(0, 0 , 0, 0.3);
+    max-width: 500px;
+    margin: 0 auto; 
+}
+ul#rooms{
+    list-style: none;
+    margin-bottom: 5px;
+}
+ul#rooms li{
+    list-style: none;
+    border-bottom: 1px solid #e5e5e5; 
+}
