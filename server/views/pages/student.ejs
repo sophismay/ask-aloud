@@ -7,8 +7,13 @@
 	<script type="text/javascript">
 		console.log("inside scrupt");
 		// init self id
-		const SELF_EASY_ID = "";
+		window.SELF_EASY_ID = "";
 
+		function resetLocalStorageKeys(keys){
+			keys.forEach(function(key, index){
+				localStorage.removeItem(key);
+			});
+		}
 		//TTK: create just one room which can embed many applications
 		// in this case, on lecture(created by lecturer)per application
 		// ** above is other way round I think **
@@ -25,15 +30,35 @@
 
 		// function called when student connects successfully
 		function loginSuccess(easyrtcId){
-			ŚELF_EASY_ID = easyrtcId;
+			window.ŚELF_EASY_ID = easyrtcId;
+			
+			resetLocalStorageKeys(Array("SELF_ID"));
+			console.log("undefiend localStorage ", localStorage.getItem("sdis"));
+			localStorage.setItem("SELF_ID", easyrtcId);
 			var whoAmI = document.getElementById("whoami");
 			whoAmI.innerHTML = "I am " + easyrtcId;
 			console.log(easyrtcId + " is actually " + easyrtc.idToName(easyrtcId));
+			console.log("connected with SELF_EASY_ID: ", window.SELF_EASY_ID);
+			console.log("local storage: ", localStorage.getItem("SELF_ID"));
+
+			// get rooms in application
+			getRooms(5000);
 		}
 
 		// function called when student's attempt to connect fails
 		function loginFailure(errorCode, message){
 			easyrtc.showError(errorCode, message);
+		}
+
+		function getRoomListSuccess(roomList){
+		  	for(roomName in roomList) {
+            	console.log("saw room " + roomName);
+          	}
+          	console.log("room list: ", roomList);
+		}
+
+		function getRoomListFailure(errorCode, errorText){
+			console.log("failed getting room list ", errorText);
 		}
 
 		function seeOtherDisabledStudents(roomName, occupants, isPrimary){
@@ -47,9 +72,9 @@
 		function makeCallRequest(lecturerId){
 			// TODO: obtain lecturer íd
 		}
-
-		function getRoomsList(){
-			//easyrtc.getRoomList(callback, errorCallback)
+		// using recursion to halt till user is connected to server
+		function getRooms(){
+			easyrtc.getRoomList(getRoomListSuccess, getRoomListFailure);	
 		}
 
 		function connect(){
@@ -78,10 +103,7 @@
 		//var makeCallBtn = document.getElementById("make-call-button");
 		function connectAndRequest(){
 			connect();
-        	// get room list
-        	console.log("conection status", easyrtc.getConnectStatus());
-        	getRoomsList();
-
+        	
         	// TODO: make call to lecturer
 		};
 	</script>
