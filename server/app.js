@@ -36,11 +36,12 @@ var socketio = io.listen(server, {
 //require('./config/socketio').default(socketio);
 require('./config/express').default(app);
 require('./routes').default(app);
-require('./config/easyrtc').default();
+require('./config/easyrtc').default(easyrtc);
+var rtc = require('./rtc').default(easyrtc, app, socketio);
 
 
 // Start EasyRTC server
-var rtc = easyrtc.listen(app, socketio, null, function(err, rtcRef) {
+/*var rtc = easyrtc.listen(app, socketio, null, function(err, rtcRef) {
     console.log("Initiated");
 
     rtcRef.events.on("roomCreate", function(appObj, creatorConnectionObj, roomName, roomOptions, callback) {
@@ -48,7 +49,7 @@ var rtc = easyrtc.listen(app, socketio, null, function(err, rtcRef) {
 
         appObj.events.defaultListeners.roomCreate(appObj, creatorConnectionObj, roomName, roomOptions, callback);
     });
-});
+});*/
 
 
 // Start server

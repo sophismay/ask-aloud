@@ -4,15 +4,75 @@
 	<% include ../partials/head %>
 </head>
 <body>
+	<script type="text/javascript">
+	  var ROOM_NAME = "";
+	  const LECTURER_NAME = "";
+	  const SELF_ID = "";
 
-<header>
+	  function roomCreationSuccess(roomName){
+	  	console.log("successfully joined room, ", roomName);
+	  	ROOM_NAME = roomName;
+	  }
+
+	  function roomCreationFailure(errorCode, errorText){
+	  	console.log("there was an error joining room");
+	  	console.log(errorText);
+	  }
+
+	  function loginSuccess(easyrtcId, roomOwner){
+	  	// roomOwner should be true since lecturer created this room
+	  	// but again: roomName wasnt sent in connection so irrelevant?????
+	  }
+
+	  function loginFailure(errorCode, errorText){
+	  	console.log("error logging in; ", errorText);
+	  }
+
+	  function connect(){
+	  	// audio only
+		easyrtc.enableVideo(false);
+		easyrtc.enableVideoReceive(false);
+		easyrtc.enableDebug(true);
+
+		// commented out because we don't care about students in the room for now
+		//easyrtc.setRoomOccupantListener(convertListToButtons);
+		easyrtc.initMediaSource(
+    		function(){        // success callback
+        		easyrtc.connect("easyrtc.AskAloud", loginSuccess, loginFailure);
+    		},
+   	 		function(errorCode, errmesg){
+        		easyrtc.showError(errorCode, errmesg);
+    		}	// failure callback
+    	);
+	  }
+
+	  function connectAndCreateRoom(){
+	  	const roomName = document.getElementById("roomname").value;
+	  	console.log("roomname " , roomName);
+	  	if(roomName === null){
+	  		alert("room name cannot be empty");
+	  		return;
+	  	}
+	  	const roomParameters = {"param1": {fieldObject: "WillBeSeenAtJoinRoomEvent", fieldValue: "againAgainAgain"}};
+	  	console.log("roomParameters , ", roomParameters);
+	  	//TODO: send server request to create room
+	  	// check uniqueness of room name in server
+	  	connect();
+	  	easyrtc.joinRoom(roomName, roomParameters, roomCreationSuccess, roomCreationFailure);
+	  }
+	</script>
+
+	<header>
 		<% include ../partials/header %>
 	</header>
 
 	<main style="min-height:600px;padding-top:150px;" class="container">
 		<div class="create-room-form">
-			<input name="roomname" id="roomname" placeholder="Enter room name" />
-			<button id="make-call-button" onclick="connectAndRequest()">Create Room</button>
+			<div class="form-group">
+    			<label for="exampleInputEmail1">Room Name</label>
+    			<input type="text" class="form-control" id="roomname" placeholder="Enter Room Name (one word)">
+  			</div>
+			<button id="make-call-button" onclick="connectAndCreateRoom()" class="btn btn-primary">Create Room</button>
 		</div>
 
 		<div id="requests-container" class="requests-container">

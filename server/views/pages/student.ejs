@@ -28,7 +28,7 @@
 			ŚELF_EASY_ID = easyrtcId;
 			var whoAmI = document.getElementById("whoami");
 			whoAmI.innerHTML = "I am " + easyrtcId;
-			console.log(easyrtcid + " is actually " + easyrtc.idToName(easyrtcid));
+			console.log(easyrtcId + " is actually " + easyrtc.idToName(easyrtcId));
 		}
 
 		// function called when student's attempt to connect fails
@@ -48,9 +48,11 @@
 			// TODO: obtain lecturer íd
 		}
 
-		//var makeCallBtn = document.getElementById("make-call-button");
-		function connectAndRequest(){
-			//e.preventDefault();
+		function getRoomsList(){
+			//easyrtc.getRoomList(callback, errorCallback)
+		}
+
+		function connect(){
 			console.log("connect clicked");
 			// audio only
 			easyrtc.enableVideo(false);
@@ -65,12 +67,20 @@
     		//easyrtc.setRoomOccupantListener(convertListToButtons);
     		easyrtc.initMediaSource(
         		function(){        // success callback
-            		easyrtc.connect("easyrtc.audioOnly", loginSuccess, loginFailure);
+            		easyrtc.connect("easyrtc.AskAloud", loginSuccess, loginFailure);
         		},
        	 		function(errorCode, errmesg){
             		easyrtc.showError(errorCode, errmesg);
         		}	// failure callback
         	);
+		}
+
+		//var makeCallBtn = document.getElementById("make-call-button");
+		function connectAndRequest(){
+			connect();
+        	// get room list
+        	console.log("conection status", easyrtc.getConnectStatus());
+        	getRoomsList();
 
         	// TODO: make call to lecturer
 		};
