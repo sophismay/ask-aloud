@@ -5,10 +5,30 @@
 </head>
 <body>
 	<script type="text/javascript">
+		console.log("inside scrupt");
+		// init self id
+		const SELF_EASY_ID = "";
+
+		//TTK: create just one room which can embed many applications
+		// in this case, on lecture(created by lecturer)per application
+		// ** above is other way round I think **
+
+		// useful functions from doc, i think:
+		// appObj.createRoom
+		// enableDataChannel, sendPeerMessage, sendServerMessage, sendData, 
+		// setApplicationName, sendDataP2P, joinRoom, setPeerListener, 
+		// setServerListener, setUsername
+		// supportsGetUserMedia, supportsPeerConnections
+		// setCookieId, setCredential, setOnCall, setOnHangup
+		// setRoomApiField: can be used to set variables, and can be listed on
+		// setRoomOccupantListener, setSocketUrl
+
 		// function called when student connects successfully
 		function loginSuccess(easyrtcId){
+			ŚELF_EASY_ID = easyrtcId;
 			var whoAmI = document.getElementById("whoami");
 			whoAmI.innerHTML = "I am " + easyrtcId;
+			console.log(easyrtcid + " is actually " + easyrtc.idToName(easyrtcid));
 		}
 
 		// function called when student's attempt to connect fails
@@ -24,11 +44,23 @@
 			});
 		}
 
-		var makeCallBtn = document.getElementById("make-call-button");
-		makeCallBtn.click = function(e){
+		function makeCallRequest(lecturerId){
+			// TODO: obtain lecturer íd
+		}
+
+		//var makeCallBtn = document.getElementById("make-call-button");
+		function connectAndRequest(){
+			//e.preventDefault();
+			console.log("connect clicked");
 			// audio only
 			easyrtc.enableVideo(false);
     		easyrtc.enableVideoReceive(false);
+    		easyrtc.enableDebug(true);
+
+    		//var applicationFields = easyrtc.getApplicationFields();
+    		//var connectionFields = easyrtc.getConnectionFields();
+    		//console.log("connection fields: ", connectionFields);
+    		//console.log("application fields: ", applicationFields);
     		// commented out because we don't care about other students in the room for now
     		//easyrtc.setRoomOccupantListener(convertListToButtons);
     		easyrtc.initMediaSource(
@@ -39,15 +71,17 @@
             		easyrtc.showError(errorCode, errmesg);
         		}	// failure callback
         	);
+
+        	// TODO: make call to lecturer
 		};
 	</script>
 	<header>
 		<% include ../partials/header %>
 	</header>
 
-	<main style="min-height:600px;margin-top:100px;">
+	<main style="min-height:600px;padding-top:150px;" class="container">
 		<div class="make-call-button">
-			<button name="make-call" id="make-call-button">Contact Lecturer</button>
+			<button id="make-call-button" onclick="connectAndRequest()">Contact Lecturer</button>
 		</div>
 		<div class="" id="whoami">
 			
