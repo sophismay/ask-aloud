@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<% include ../partials/head %>
+</head>
+<body>
+
+<header>
+		<% include ../partials/header %>
+	</header>
+
+	<main style="min-height:600px;padding-top:150px;" class="container">
+		<div class="create-room-form">
+			<input name="roomname" id="roomname" placeholder="Enter room name" />
+			<button id="make-call-button" onclick="connectAndRequest()">Create Room</button>
+		</div>
+
+		<div id="requests-container" class="requests-container">
+			<ul id="requests">
+
+			</ul>
+		</div>
+
+	</main>
+
+	<footer>
+		<% include ../partials/footer %>
+	</footer>
+
+</body>
+
+</html>
