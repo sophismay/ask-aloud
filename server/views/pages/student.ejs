@@ -14,6 +14,12 @@
 				localStorage.removeItem(key);
 			});
 		}
+
+		easyrtc.setStreamAcceptor(function(easyrtcId, stream){
+			var audio = $("#callerAudio");
+			easyrtc.setVideoObjectSrc(audio, stream);
+		});
+
 		//TTK: create just one room which can embed many applications
 		// in this case, on lecture(created by lecturer)per application
 		// ** above is other way round I think **
@@ -76,13 +82,14 @@
 		}
 
 		function makeCallToLecturer(roomName){
-			alert("make call called");
+			//alert("make call called");
 			// send to lecturer event "call_request", then make call
-			easyrtc.sendPeerMessage(localStorage.getItem("LECTURER_ID"), "call_request", {callerId: localStorage.getItem("SELF_ID")}, 
-	  	  		sendCallerInfoSuccess, sendCallerInfoFailure);
+			//easyrtc.sendPeerMessage(localStorage.getItem("LECTURER_ID"), "call_request", {callerId: localStorage.getItem("SELF_ID")}, 
+	  	  	//	sendCallerInfoSuccess, sendCallerInfoFailure);
 			//easyrtc.call(localStorage.getItem("LECTURER_ID"), 
 			//	callLecturerSuccess, callLecturerFailure, callLecturerAccepted);
-			var rsltArr = easyrtc.usernameToIds("lecturer", roomName);
+			var rsltArr = easyrtc.usernameToIds("Lecturer");
+			console.log("LECTURER ID ", rsltArr);
 			easyrtc.call(rsltArr[0].easyrtcid, callLecturerSuccess, 
 				callLecturerFailure, callLecturerAccepted);
 		}
@@ -92,10 +99,11 @@
 			//$("call-button-span-" + roomName).css({display: "block"});
 			var jCallBtn = $("#call-button-" + roomName);
 			jCallBtn.css({display: "block"});
-			jCallBtn.click(makeCallToLecturer);
+			jCallBtn.click(makeCallToLecturer(roomName));
 
 			// adding call here
-			makeCallToLecturer(roomName);
+
+			//makeCallToLecturer(roomName);
 		}
 
 		function roomJoinFailure(errorCode, errorText){
@@ -105,7 +113,21 @@
 		// send request to lecturer
 		function handleJoinClick(eventData){
 			var roomName = eventData.data;
-			easyrtc.joinRoom(roomName, null, roomJoinSuccess, roomJoinFailure);
+			console.log("HANDLE JOIN CLICK: roomname, ", roomName);
+			easyrtc.joinRoom(roomName, null, null, null);
+
+
+			// create call button dynamically 
+			var button = $('<button/>', {
+        		text: "Call", //set text 1 to 10
+        		id: 'btn_',
+        		click: function () { makeCallToLecturer(roomName); }
+    		});
+			$("#room-article-"+ roomName +  " div:last-child span").after(button);
+
+			//makeCallToLecturer("C205");
+
+
 		}
 
 		function getRoomListSuccess(roomList){
@@ -128,7 +150,7 @@
       				//$("#room-article div:last-child span").attr("id", "call-button-span-" + roomName);
       				//$("#call-button-span-"+roomName).css({display: "none"});
       				
-      				$("#room-article div:last-child span button").attr("id", "call-button-" + roomName);
+      				//$("#room-article div:last-child span button").attr("id", "call-button-" + roomName);
       				count += 1;
       			} else {
       				var roomArticle = $("#room-article").clone(false); // dont add event handlers
@@ -136,13 +158,13 @@
       				roomArticle.attr("id", "room-article-" + roomName);
       				previousArticle = $("#room-article-"+roomName);
       				// set call button id and make invisible. also for its span container
-      				var callBtnId = "call-button-" + roomName;
-      				$("#room-article-"+ roomName +" div:last-child span button").attr("id", callBtnId);
-      				$(callBtnId).css({display: "block"});
+      				//var callBtnId = "call-button-" + roomName;
+      				//$("#room-article-"+ roomName +" div:last-child span button").attr("id", callBtnId);
+      				//$(callBtnId).css({display: "block"});
       				//$("#room-article div:last-child span").attr("id", "call-button-span-" + roomName)
       				//$("#call-button-span-" + roomName).css({display: "none"});
 
-      				console.log("CALL BUTTON: ", $(callBtnId));
+      				//console.log("CALL BUTTON: ", $(callBtnId));
       				var query = "#" + roomArticle.attr("id") + " div:last-child button";
       				console.log("DIDNT MATHC? ", query, $(query));
       				$("#rooms-list-container").append(roomArticle);
@@ -218,13 +240,14 @@
 
 		function connectAndRequest(){
 			connect();
-        	
-        	// TODO: make call to lecturer
 		};
+
+
 	</script>
 	<header>
 		<% include ../partials/header %>
 	</header>
+	<video id="callerAudio"></video>
 
 	<main style="min-height:600px;padding-top:150px;" class="container">
 		<div class="connect-btn">
@@ -262,11 +285,11 @@
                             <span class="glyphicon glyphicon-plus"></span>
                             Join
                         </button>
-                        <span class="pull-right event-call-container">
-                             <button class="btn btn-sm btn-default" id="">
+                        <span class="pull-right event-call-container" id="call-btn-span">
+                            <!--  <button class="btn btn-sm btn-default" id="">
                                  <span class="glyphicon glyphicon-share"></span>
                                  Call
-                             </button>
+                             </button> -->
                              
                         </span>
                     </div>
