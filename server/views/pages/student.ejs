@@ -75,13 +75,16 @@
         	}
 		}
 
-		function makeCallToLecturer(){
+		function makeCallToLecturer(roomName){
 			alert("make call called");
 			// send to lecturer event "call_request", then make call
 			easyrtc.sendPeerMessage(localStorage.getItem("LECTURER_ID"), "call_request", {callerId: localStorage.getItem("SELF_ID")}, 
 	  	  		sendCallerInfoSuccess, sendCallerInfoFailure);
-			easyrtc.call(localStorage.getItem("LECTURER_ID"), 
-				callLecturerSuccess, callLecturerFailure, callLecturerAccepted);
+			//easyrtc.call(localStorage.getItem("LECTURER_ID"), 
+			//	callLecturerSuccess, callLecturerFailure, callLecturerAccepted);
+			var rsltArr = easyrtc.usernameToIds("lecturer", roomName);
+			easyrtc.call(rsltArr[0].easyrtcid, callLecturerSuccess, 
+				callLecturerFailure, callLecturerAccepted);
 		}
 
 		function roomJoinSuccess(roomName){
@@ -92,7 +95,7 @@
 			jCallBtn.click(makeCallToLecturer);
 
 			// adding call here
-			makeCallToLecturer();
+			makeCallToLecturer(roomName);
 		}
 
 		function roomJoinFailure(errorCode, errorText){
