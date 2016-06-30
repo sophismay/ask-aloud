@@ -32,7 +32,7 @@ function loginFailure(errorCode, message) {
 }
 
 function joinSuccess(roomName) {
-	
+	console.log(roomName);
 }
 
 function joinFailure(errorCode, errorText, roomName) {
