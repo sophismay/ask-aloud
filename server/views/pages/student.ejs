@@ -50,19 +50,50 @@
 		function loginFailure(errorCode, message){
 			easyrtc.showError(errorCode, message);
 		}
+		// handle when join button is clicked
+		// send request to lecturer
+		function handleJoinClick(eventData){
+			var roomName = eventData.data;
+		}
 
 		function getRoomListSuccess(roomList){
 			// now list rooms in view
-          	var rooms = document.getElementById("rooms");
+			$(".sponsor-content-bg").css({"display":"block"});
+			console.log("roomLust", roomList);
+          	var rooms = $("#rooms");
           	rooms.innerHTML = '';
+          	//  clone copies if more than 1
+          	var roomsContainer;
+      		$("#room-article").css({display: "block"});
+      		roomArticle = $("#room-article").clone(false); // dont add event handlers
+      		console.log("cloned romms container ", roomArticle);
+      		var count = 0;
+      		for(roomName in roomList){
+      			if(count === 0){
+      				// match the button and add listener
+      				$("#room-article div:last-child button").click(roomName, handleJoinClick);
+      				count += 1;
+      			} else {
+      				// change id to match, then add click listener to button
+      				roomArticle.attr("id", "room-article-" + roomName);
+      				var query = "#" + roomArticle.attr("id") + " div:last-child button";
+      				console.log("DIDNT MATHC? ", query, $(query));
+      				$("#rooms-list-container").append(roomArticle);
+      				// added after append, to take effect
+      				$(query).click(roomName, handleJoinClick);
+      				count += 1;
+      			}
+      		}
+          	
+          	// assign room names to blocks
+          	var count = 0;
 		  	for(roomName in roomList) {
-            	console.log("saw room " + roomName);
-            	var li = document.createElement("li");
-            	var text = document.createTextNode(roomName);
-            	li.appendChild(text);
-            	rooms.appendChild(li);
+            	$(".room-name").each(function(i){
+            		if(i === count)
+            			$(this).text(roomName);
+            	});
+            	count += 1;
           	}
-          	console.log("room list: ", roomList);
 		}
 
 		function getRoomListFailure(errorCode, errorText){
@@ -108,7 +139,6 @@
         	);
 		}
 
-		//var makeCallBtn = document.getElementById("make-call-button");
 		function connectAndRequest(){
 			connect();
         	
@@ -120,33 +150,21 @@
 	</header>
 
 	<main style="min-height:600px;padding-top:150px;" class="container">
-		<div class="make-call-button">
-			<button id="make-call-button" onclick="connectAndRequest()">Contact Lecturer</button>
+		<div class="connect-btn">
+			<button id="connect-btn" onclick="connectAndRequest()" class="btn btn-primary">Connect</button>
 		</div>
 		<div class="" id="whoami">
 			
 		</div>
 
-		<div id="other-students-container" class="other-students-container">
-			<ul id="other-students">
-
-			</ul>
-		</div>
-
-		<div id="rooms-container" class="rooms-container">
-			<ul id="rooms">
-
-			</ul>
-		</div>
-
 		<div class="sponsor-content-bg">
     	  <div class="container">
-        	<div class="content-col-container">
+        	<div class="content-col-container" id="content-col-container">
               <div class="content-header">
                 <h4> Current Rooms</h4>
               </div>
-              <div class="container">
-              	<div class="event-article col-md-3" style="margin-left: 20px;">
+              <div class="container" id="rooms-list-container">
+              	<div class="event-article col-md-3" style="margin-left: 20px;" id="room-article">
                     <div class="event-article-header red-header">
                         <h5>Category</h5>
                     </div>
@@ -154,7 +172,7 @@
                         <img src="assets/images/default.png" alt=""/>
                     </div>
                     <div class="event-article-title">
-                        <h4> Room Name Goes Here</h4>
+                        <h4 class="room-name"> Room Name Goes Here</h4>
                     </div>
                     <div class="event-article-content">
                         <p>
@@ -163,7 +181,7 @@
                         </p>
                     </div>
                     <div class="event-article-extras">
-                        <button class="btn btn-sm btn-default">
+                        <button class="btn btn-sm btn-default join-btn" id="">
                             <span class="glyphicon glyphicon-plus"></span>
                             Join
                         </button>
