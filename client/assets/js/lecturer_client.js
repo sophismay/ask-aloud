@@ -10,7 +10,7 @@ function connect(roomName) {
 	easyrtc.setUsername("Lecturer");
 	easyrtc.joinRoom(roomName, null, joinSuccess, joinFailure);
     //easyrtc.setRoomOccupantListener(convertListToButtons);
-	easyrtc.connect("easyrtc.audioOnly", loginSuccess, loginFailure);
+	easyrtc.connect("easyrtc.AskAloud", loginSuccess, loginFailure);
 
 }
 
