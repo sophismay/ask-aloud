@@ -50,10 +50,59 @@
 		function loginFailure(errorCode, message){
 			easyrtc.showError(errorCode, message);
 		}
+
+		function sendCallerInfoSuccess(msgType, msgBody){
+	  		console.log("call request message was sent ", msgType, msgBody);
+	  	}
+		function sendCallerInfoFailure(errorCode, errorText){
+		  console.log("error sending call request info ", errorText);
+		}
+
+		function callLecturerSuccess(){
+			console.log("call req SUCCESS");
+		}
+
+		function callLecturerFailure(){
+			console.log("call req FAILURE");
+		}	
+
+		function callLecturerAccepted(accepted, caller){
+			console.log("INSIDE CALL ACCEPTED");
+			easyrtc.hangupAll();
+			if( !accepted ) {
+            	easyrtc.showError("CALL-REJECTED", "Sorry, your call to " + easyrtc.idToName(caller) + " was rejected");
+            	enable('otherClients');
+        	}
+		}
+
+		function makeCallToLecturer(){
+			alert("make call called");
+			// send to lecturer event "call_request", then make call
+			easyrtc.sendPeerMessage(localStorage.getItem("LECTURER_ID"), "call_request", {callerId: localStorage.getItem("SELF_ID")}, 
+	  	  		sendCallerInfoSuccess, sendCallerInfoFailure);
+			easyrtc.call(localStorage.getItem("LECTURER_ID"), 
+				callLecturerSuccess, callLecturerFailure, callLecturerAccepted);
+		}
+
+		function roomJoinSuccess(roomName){
+			alert("you have joined room " + roomName);
+			//$("call-button-span-" + roomName).css({display: "block"});
+			var jCallBtn = $("#call-button-" + roomName);
+			jCallBtn.css({display: "block"});
+			jCallBtn.click(makeCallToLecturer);
+
+			// adding call here
+			makeCallToLecturer();
+		}
+
+		function roomJoinFailure(errorCode, errorText){
+			alert("you could not join the room");
+		}
 		// handle when join button is clicked
 		// send request to lecturer
 		function handleJoinClick(eventData){
 			var roomName = eventData.data;
+			easyrtc.joinRoom(roomName, null, roomJoinSuccess, roomJoinFailure);
 		}
 
 		function getRoomListSuccess(roomList){
@@ -65,22 +114,39 @@
           	//  clone copies if more than 1
           	var roomsContainer;
       		$("#room-article").css({display: "block"});
-      		roomArticle = $("#room-article").clone(false); // dont add event handlers
-      		console.log("cloned romms container ", roomArticle);
+      		
       		var count = 0;
+      		var previousArticle;
       		for(roomName in roomList){
       			if(count === 0){
       				// match the button and add listener
       				$("#room-article div:last-child button").click(roomName, handleJoinClick);
+      				// set id for call button and its span
+      				//$("#room-article div:last-child span").attr("id", "call-button-span-" + roomName);
+      				//$("#call-button-span-"+roomName).css({display: "none"});
+      				
+      				$("#room-article div:last-child span button").attr("id", "call-button-" + roomName);
       				count += 1;
       			} else {
+      				var roomArticle = $("#room-article").clone(false); // dont add event handlers
       				// change id to match, then add click listener to button
       				roomArticle.attr("id", "room-article-" + roomName);
+      				previousArticle = $("#room-article-"+roomName);
+      				// set call button id and make invisible. also for its span container
+      				var callBtnId = "call-button-" + roomName;
+      				$("#room-article-"+ roomName +" div:last-child span button").attr("id", callBtnId);
+      				$(callBtnId).css({display: "block"});
+      				//$("#room-article div:last-child span").attr("id", "call-button-span-" + roomName)
+      				//$("#call-button-span-" + roomName).css({display: "none"});
+
+      				console.log("CALL BUTTON: ", $(callBtnId));
       				var query = "#" + roomArticle.attr("id") + " div:last-child button";
       				console.log("DIDNT MATHC? ", query, $(query));
       				$("#rooms-list-container").append(roomArticle);
+      				//roomArticle.insertAfter(previousArticle);
       				// added after append, to take effect
       				$(query).click(roomName, handleJoinClick);
+      				//$("#call-button-"+roomName).bind("click", makeCallToLecturer);
       				count += 1;
       			}
       		}
@@ -116,12 +182,20 @@
 			easyrtc.getRoomList(getRoomListSuccess, getRoomListFailure);	
 		}
 
+		function roomOwnerListener(easyrtcId, msgType, msgData, targeting){
+			console.log("ROOM OWNER event received: ", msgType, msgData, targeting);
+			// set gloabal lecturer easyrtcid
+			localStorage.setItem("LECTURER_ID", easyrtcId);
+		}
+
 		function connect(){
 			console.log("connect clicked");
 			// audio only
 			easyrtc.enableVideo(false);
     		easyrtc.enableVideoReceive(false);
     		easyrtc.enableDebug(true);
+    		// listen for whenever room_owner message is received
+    		easyrtc.setPeerListener(roomOwnerListener, "room_owner");
 
     		//var applicationFields = easyrtc.getApplicationFields();
     		//var connectionFields = easyrtc.getConnectionFields();
@@ -185,6 +259,13 @@
                             <span class="glyphicon glyphicon-plus"></span>
                             Join
                         </button>
+                        <span class="pull-right event-call-container">
+                             <button class="btn btn-sm btn-default" id="">
+                                 <span class="glyphicon glyphicon-share"></span>
+                                 Call
+                             </button>
+                             
+                        </span>
                     </div>
                 </div>
               </div>

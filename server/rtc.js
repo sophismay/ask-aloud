@@ -31,6 +31,7 @@ const rtc = (easyrtc, app, socketio) => {
         	console.log("roomCreate fired! Trying to create: " + roomName);
         	console.log("room name ", roomName)
 			console.log("room options ", roomOptions)
+			console.log("creator connection object ", creatorConnectionObj)
         	appObj.events.defaultListeners.roomCreate(appObj, creatorConnectionObj, roomName, roomOptions, callback);
     	});
 
