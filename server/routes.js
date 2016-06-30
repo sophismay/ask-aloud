@@ -31,6 +31,14 @@ export default function(app) {
       res.render('pages/lecturer')
     })   
 
+
+  app.route('/lecturer2')
+    .get((req, res) => { 
+    res.sendFile(path.resolve(app.get('appPath') + '/lecturer.html')); 
+    //res.render('pages/index')
+  }) 
+
+
   // All other routes should redirect to the index.html
   app.route('/*')
     .get((req, res) => {
