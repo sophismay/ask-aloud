@@ -36,20 +36,14 @@
 
 		// function called when student connects successfully
 		function loginSuccess(easyrtcId){
-			window.ŚELF_EASY_ID = easyrtcId;
-			
 			resetLocalStorageKeys(Array("SELF_ID"));
-			console.log("undefiend localStorage ", localStorage.getItem("sdis"));
 			localStorage.setItem("SELF_ID", easyrtcId);
-			var whoAmI = document.getElementById("whoami");
-			whoAmI.innerHTML = "I am " + easyrtcId;
-			console.log(easyrtcId + " is actually " + easyrtc.idToName(easyrtcId));
-			console.log("connected with SELF_EASY_ID: ", window.SELF_EASY_ID);
-			console.log("local storage: ", localStorage.getItem("SELF_ID"));
+
+			// hide connect button and form 
+			$("#connect-container").css({display: "none"});
 
 			// get rooms in application
 			getRooms();
-
 		}
 
 		// function called when student's attempt to connect fails
@@ -82,7 +76,6 @@
 		}
 
 		function makeCallToLecturer(roomName){
-			//alert("make call called");
 			// send to lecturer event "call_request", then make call
 			//easyrtc.sendPeerMessage(localStorage.getItem("LECTURER_ID"), "call_request", {callerId: localStorage.getItem("SELF_ID")}, 
 	  	  	//	sendCallerInfoSuccess, sendCallerInfoFailure);
@@ -132,7 +125,7 @@
 
 		function getRoomListSuccess(roomList){
 			// now list rooms in view
-			$(".sponsor-content-bg").css({"display":"block"});
+			$(".sponsor-content-bg").css({"display":"block", marginTop: "-100px"});
 			console.log("roomLust", roomList);
           	var rooms = $("#rooms");
           	rooms.innerHTML = '';
@@ -222,10 +215,6 @@
     		// listen for whenever room_owner message is received
     		easyrtc.setPeerListener(roomOwnerListener, "room_owner");
 
-    		//var applicationFields = easyrtc.getApplicationFields();
-    		//var connectionFields = easyrtc.getConnectionFields();
-    		//console.log("connection fields: ", connectionFields);
-    		//console.log("application fields: ", applicationFields);
     		// commented out because we don't care about other students in the room for now
     		//easyrtc.setRoomOccupantListener(convertListToButtons);
     		easyrtc.initMediaSource(
@@ -236,6 +225,10 @@
             		easyrtc.showError(errorCode, errmesg);
         		}	// failure callback
         	);
+        	if ( !easyrtc.setUsername($("#username").val()) ){
+       			alert("bad user name");
+       			easyrtc.disconnect();
+       		}
 		}
 
 		function connectAndRequest(){
@@ -247,14 +240,18 @@
 	<header>
 		<% include ../partials/header %>
 	</header>
-	<video id="callerAudio"></video>
+	
 
 	<main style="min-height:600px;padding-top:150px;" class="container">
-		<div class="connect-btn">
+
+		<video id="callerAudio"></video>
+
+		<div class="connect-btn" id="connect-container">
+			<div class="form-group">
+    			<label for="username">Username</label>
+    			<input type="text" class="form-control" id="username" placeholder="Enter username (one word)">
+  			</div>
 			<button id="connect-btn" onclick="connectAndRequest()" class="btn btn-primary">Connect</button>
-		</div>
-		<div class="" id="whoami">
-			
 		</div>
 
 		<div class="sponsor-content-bg">
