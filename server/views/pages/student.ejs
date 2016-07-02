@@ -88,15 +88,7 @@
 		}
 
 		function roomJoinSuccess(roomName){
-			alert("you have joined room " + roomName);
-			//$("call-button-span-" + roomName).css({display: "block"});
-			var jCallBtn = $("#call-button-" + roomName);
-			jCallBtn.css({display: "block"});
-			jCallBtn.click(makeCallToLecturer(roomName));
-
-			// adding call here
-
-			//makeCallToLecturer(roomName);
+			console.log("you have joined room " + roomName);
 		}
 
 		function roomJoinFailure(errorCode, errorText){
@@ -107,20 +99,17 @@
 		function handleJoinClick(eventData){
 			var roomName = eventData.data;
 			console.log("HANDLE JOIN CLICK: roomname, ", roomName);
-			easyrtc.joinRoom(roomName, null, null, null);
+			easyrtc.joinRoom(roomName, null, roomJoinSuccess, roomJoinFailure);
 
 
 			// create call button dynamically 
 			var button = $('<button/>', {
         		text: "Call", //set text 1 to 10
-        		id: 'btn_',
+        		class: "btn btn-sm btn-default",
+        		id: "call-button-" + roomName,
         		click: function () { makeCallToLecturer(roomName); }
     		});
-			$("#room-article-"+ roomName +  " div:last-child span").after(button);
-
-			//makeCallToLecturer("C205");
-
-
+			$("#room-article-"+ roomName +  " div:last-child span#call-btn-span").after(button);
 		}
 
 		function getRoomListSuccess(roomList){
@@ -139,32 +128,18 @@
       			if(count === 0){
       				// match the button and add listener
       				$("#room-article div:last-child button").click(roomName, handleJoinClick);
-      				// set id for call button and its span
-      				//$("#room-article div:last-child span").attr("id", "call-button-span-" + roomName);
-      				//$("#call-button-span-"+roomName).css({display: "none"});
-      				
-      				//$("#room-article div:last-child span button").attr("id", "call-button-" + roomName);
       				count += 1;
       			} else {
       				var roomArticle = $("#room-article").clone(false); // dont add event handlers
       				// change id to match, then add click listener to button
       				roomArticle.attr("id", "room-article-" + roomName);
       				previousArticle = $("#room-article-"+roomName);
-      				// set call button id and make invisible. also for its span container
-      				//var callBtnId = "call-button-" + roomName;
-      				//$("#room-article-"+ roomName +" div:last-child span button").attr("id", callBtnId);
-      				//$(callBtnId).css({display: "block"});
-      				//$("#room-article div:last-child span").attr("id", "call-button-span-" + roomName)
-      				//$("#call-button-span-" + roomName).css({display: "none"});
-
-      				//console.log("CALL BUTTON: ", $(callBtnId));
+      				
       				var query = "#" + roomArticle.attr("id") + " div:last-child button";
       				console.log("DIDNT MATHC? ", query, $(query));
       				$("#rooms-list-container").append(roomArticle);
-      				//roomArticle.insertAfter(previousArticle);
       				// added after append, to take effect
       				$(query).click(roomName, handleJoinClick);
-      				//$("#call-button-"+roomName).bind("click", makeCallToLecturer);
       				count += 1;
       			}
       		}
