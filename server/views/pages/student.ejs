@@ -68,7 +68,7 @@
 
 		function callLecturerAccepted(accepted, caller){
 			console.log("INSIDE CALL ACCEPTED");
-			easyrtc.hangupAll();
+			//easyrtc.hangupAll();
 			if( !accepted ) {
             	easyrtc.showError("CALL-REJECTED", "Sorry, your call to " + easyrtc.idToName(caller) + " was rejected");
             	enable('otherClients');
