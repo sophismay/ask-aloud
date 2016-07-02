@@ -3,7 +3,7 @@
 <head>
 	<% include ../partials/head %>
 </head>
-<body>
+<body onload="initSketch()">
 	<script type="text/javascript">
 		console.log("inside scrupt");
 		// init self id
@@ -34,6 +34,10 @@
 		// setRoomApiField: can be used to set variables, and can be listed on
 		// setRoomOccupantListener, setSocketUrl
 
+		function openSketchModal(){
+
+		}
+
 		// function called when student connects successfully
 		function loginSuccess(easyrtcId){
 			resetLocalStorageKeys(Array("SELF_ID"));
@@ -58,11 +62,23 @@
 		  console.log("error sending call request info ", errorText);
 		}
 
-		function callLecturerSuccess(){
+		function callLecturerSuccess(otherCaller, mediaType){
 			console.log("call req SUCCESS");
+
+			// create and enable sketch button which enables a modal on click
+			var button = $('<button/>', {
+        		text: "Sketch", //set text 1 to 10
+        		class: "btn btn-sm btn-primary",
+        		id: "sketch-button-" + roomName,
+        		click: function () { openSketchModal(); }
+    		});
+    		// set modal call attributes
+    		button.attr("data-toggle", "modal");
+    		button.attr("data-target", "#sketch-modal");
+			$("#room-article-"+ roomName +  " div:last-child span#call-btn-span").after(button);
 		}
 
-		function callLecturerFailure(){
+		function callLecturerFailure(errorCode, errorText){
 			console.log("call req FAILURE");
 		}	
 
@@ -228,6 +244,9 @@
   			</div>
 			<button id="connect-btn" onclick="connectAndRequest()" class="btn btn-primary">Connect</button>
 		</div>
+		<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#sketch-modal">
+  			Open Modal
+		</button>
 
 		<div class="sponsor-content-bg">
     	  <div class="container">
@@ -273,6 +292,52 @@
 
 
 	</main>
+
+	<!-- Modal -->
+	<div class="modal fade" id="sketch-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="margin-top:60px;">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">Sketch</h4>
+	      </div>
+	      <div class="modal-body">
+	        <div class="container">
+				<div class="tools-container">
+					Choose Color
+					<ul class="color-box-list">
+						<li class="color-box" id="green" onclick="color(this)"></li>
+						<li class="color-box" id="blue" onclick="color(this)"></li>
+						<li class="color-box" id="red" onclick="color(this)"></li>
+				        <li class="color-box" id="yellow" onclick="color(this)"></li>
+				        <li class="color-box" id="orange" onclick="color(this)"></li>
+				        <li class="color-box" id="black" onclick="color(this)"></li>
+					</ul>
+				</div>
+		
+				<div class="tools-container">
+					Eraser
+					<ul class="color-box-list">
+						<li class="color-box" id="white" onclick="color(this)"></li>
+					</ul>
+				</div>
+
+				<canvas id="can" width="500" height="400"></canvas>
+
+				<div class="form-group">
+					<button id="btn" onclick="save()" class="btn btn-primary">Save</button>
+		        	<button id="clr" onclick="erase()" class="btn btn-default">Clear</button>	
+				</div>
+		
+	  		</div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-primary">Save changes</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 
 	<footer>
 		<% include ../partials/footer %>

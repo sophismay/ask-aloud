@@ -31,6 +31,10 @@ export default function(app) {
       res.render('pages/lecturer')
     })   
 
+  app.route('/sketch')
+    .get( (req, res) => {
+      res.render('pages/sketch')
+    })   
 
   app.route('/lecturer2')
     .get((req, res) => { 
