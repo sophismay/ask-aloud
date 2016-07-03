@@ -54,7 +54,7 @@ easyrtc.setAcceptChecker(function(easyrtcid, callback) {
 	requests[easyrtcid] = function() {
         acceptTheCall(true);
     };
-	bridge.callRequest(easyrtcid);
+	bridge.callRequest(easyrtc.idToName(easyrtcid), easyrtcid);
 } );
 
 function acceptCall(easyrtcid) {
