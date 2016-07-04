@@ -102,8 +102,9 @@
         if (res == 'down') {
             prevX = currX;
             prevY = currY;
-            currX = e.layerX - canvas.offsetLeft;
-            currY = e.layerY - canvas.offsetTop;
+            currX = e.clientX - canvas.offsetLeft;
+            currY = e.clientY - canvas.offsetTop + $(document).scrollTop();
+            console.log("SCROLL TOP : ", $(document).scrollTop());
     
             flag = true;
             dot_flag = true;
@@ -122,8 +123,8 @@
             if (flag) {
                 prevX = currX;
                 prevY = currY;
-                currX = e.layerX - canvas.offsetLeft;
-                currY = e.layerY - canvas.offsetTop;
+                currX = e.clientX - canvas.offsetLeft;
+                currY = e.clientY - canvas.offsetTop + $(document).scrollTop();
                 draw();
             }
         }
