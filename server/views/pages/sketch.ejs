@@ -18,30 +18,43 @@
     function init() {
         canvas = document.getElementById('can');
         ctx = canvas.getContext("2d");
-        w = canvas.width;
-        h = canvas.height;
+        w = window.innerWidth; //canvas.width;
+        h = window.innerHeight; //canvas.height;
     
         canvas.addEventListener("mousemove", function (e) {
             findxy('move', e)
             //console.log("mouse move; ", e);
             // only send if there is a mouse click while moving
             if(e.buttons === 1){
-            	sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            	//sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
             }
             
         }, false);
         canvas.addEventListener("mousedown", function (e) {
-            findxy('down', e)
+            findxy('down', e);
             console.log("mouse down; ", e);
         }, false);
         canvas.addEventListener("mouseup", function (e) {
-            findxy('up', e)
+            findxy('up', e);
             console.log("mouse up; ", e);
         }, false);
         canvas.addEventListener("mouseout", function (e) {
-            findxy('out', e)
+            findxy('out', e);
             console.log("mouse out; ", e);
         }, false);
+
+        canvas.addEventListener("touchstart", function(e){
+            findTouchxy('down', e);
+            console.log("TOUCH DOWN; ", e);
+        });
+        canvas.addEventListener("touchmove", function(e){
+            findTouchxy('move', e);
+            console.log("TOUCH MOVE: ", e);
+        });
+        canvas.addEventListener("touchend", function(e){
+            findTouchxy('up', e);
+            console.log("TOUCH END; ", e);
+        });
     }
     
     function color(obj) {
@@ -97,8 +110,53 @@
         document.getElementById("canvasimg").src = dataURL;
         document.getElementById("canvasimg").style.display = "inline";
     }
+
+    function findTouchxy(res, e){
+        if(res == "down"){
+            prevX = currX;
+            prevY = currY;
+            if(e.type.contains("touch")){
+                console.log("SEE THIS IN MOBILE BROWSER, targetTouches: ", e.targetTouches[0]);
+                currX = e.targetTouches[0].pageX - canvas.offsetLeft;
+                currY = e.targetTouches[0].pageY - canvas.offsetTop + $(document).scrollTop();
+            } else {
+                currX = e.clientX - canvas.offsetLeft;
+                currY = e.clientY - canvas.offsetTop + $(document).scrollTop();
+            }
+
+            flag = true;
+            dot_flag = true;
+            if (dot_flag) {
+                ctx.beginPath();
+                ctx.fillStyle = x;
+                ctx.fillRect(currX, currY, 2, 2);
+                ctx.closePath();
+                dot_flag = false;
+            }
+        }
+
+        if (res == 'up' || res == "out") {
+            flag = false;
+        }
+        if (res == 'move') {
+            if (flag) {
+                prevX = currX;
+                prevY = currY;
+                if(e.type.contains("touch")){
+                    console.log("SEE THIS IN MOBILE BROWSER, targetTouches: ", e.targetTouches[0]);
+                    currX = e.targetTouches[0].pageX - canvas.offsetLeft;
+                    currY = e.targetTouches[0].pageY - canvas.offsetTop + $(document).scrollTop();
+                } else {
+                    currX = e.clientX - canvas.offsetLeft;
+                    currY = e.clientY - canvas.offsetTop + $(document).scrollTop();
+                }
+                draw();
+            }
+        }
+    }
     
     function findxy(res, e) {
+        var rect = ctx.canvas.getBoundingClientRect();
         if (res == 'down') {
             prevX = currX;
             prevY = currY;
@@ -169,7 +227,7 @@
 			</ul>
 		</div>
 
-		<canvas id="can" width="500" height="400"></canvas>
+		<canvas id="can" width="500" height="400" tabindex="0"></canvas>
 
 		<div class="form-group">
 			<button id="btn" onclick="save()" class="btn btn-primary">Save</button>
