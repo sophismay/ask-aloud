@@ -1,66 +1,86 @@
-
 var canvas, ctx, flag = false,
     prevX = 0,
     currX = 0,
     prevY = 0,
     currY = 0,
     dot_flag = false;
+    currentColor = "black";
 
 var x = "black",
     y = 2;
 
 function initSketch() {
-    console.log("INIT SKETCH CALLED");
     canvas = document.getElementById('can');
     ctx = canvas.getContext("2d");
-    w = canvas.width;
-    h = canvas.height;
+    w = window.innerWidth; //canvas.width;
+    h = window.innerHeight; //canvas.height;
 
     canvas.addEventListener("mousemove", function (e) {
         findxy('move', e)
         //console.log("mouse move; ", e);
         // only send if there is a mouse click while moving
         if(e.buttons === 1){
-        	sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
         }
         
     }, false);
     canvas.addEventListener("mousedown", function (e) {
-        findxy('down', e)
+        findxy('down', e);
         console.log("mouse down; ", e);
     }, false);
     canvas.addEventListener("mouseup", function (e) {
-        findxy('up', e)
+        findxy('up', e);
         console.log("mouse up; ", e);
     }, false);
     canvas.addEventListener("mouseout", function (e) {
-        findxy('out', e)
+        findxy('out', e);
         console.log("mouse out; ", e);
     }, false);
+
+    canvas.addEventListener("touchstart", function(e){
+        findTouchxy('down', e);
+        console.log("TOUCH DOWN; ", e);
+    });
+    canvas.addEventListener("touchmove", function(e){
+        //e.preventDefault();
+        findTouchxy('move', e);
+        console.log("TOUCH MOVE: ", e);
+    });
+    canvas.addEventListener("touchend", function(e){
+        findTouchxy('up', e);
+        console.log("TOUCH END; ", e);
+    });
 }
 
 function color(obj) {
     switch (obj.id) {
         case "green":
             x = "green";
+            currentColor = "green";
             break;
         case "blue":
             x = "blue";
+            currentColor = "blue";
             break;
         case "red":
             x = "red";
+            currentColor = "red";
             break;
         case "yellow":
             x = "yellow";
+            currentColor = "yellow";
             break;
         case "orange":
             x = "orange";
+            currentColor = "orange";
             break;
         case "black":
             x = "black";
+            currentColor = "black";
             break;
         case "white":
             x = "white";
+            currentColor = "white";
             break;
     }
     if (x == "white") y = 14;
@@ -86,19 +106,58 @@ function erase() {
     }
 }
 
-function save() {
-    document.getElementById("canvasimg").style.border = "2px solid";
-    var dataURL = canvas.toDataURL();
-    document.getElementById("canvasimg").src = dataURL;
-    document.getElementById("canvasimg").style.display = "inline";
+function findTouchxy(res, e){
+    if(res == "down"){
+        prevX = currX;
+        prevY = currY;
+        if(e.type.contains("touch")){
+            console.log("SEE THIS IN MOBILE BROWSER, targetTouches: ", e.targetTouches[0]);
+            currX = e.targetTouches[0].pageX - canvas.offsetLeft;
+            currY = e.targetTouches[0].pageY - canvas.offsetTop + $(document).scrollTop();
+        } else {
+            currX = e.clientX - canvas.offsetLeft;
+            currY = e.clientY - canvas.offsetTop + $(document).scrollTop();
+        }
+
+        flag = true;
+        dot_flag = true;
+        if (dot_flag) {
+            ctx.beginPath();
+            ctx.fillStyle = x;
+            ctx.fillRect(currX, currY, 2, 2);
+            ctx.closePath();
+            dot_flag = false;
+        }
+    }
+
+    if (res == 'up' || res == "out") {
+        flag = false;
+    }
+    if (res == 'move') {
+        if (flag) {
+            prevX = currX;
+            prevY = currY;
+            if(e.type.contains("touch")){
+                console.log("SEE THIS IN MOBILE BROWSER, targetTouches: ", e.targetTouches[0]);
+                currX = e.targetTouches[0].pageX - canvas.offsetLeft;
+                currY = e.targetTouches[0].pageY - canvas.offsetTop + $(document).scrollTop();
+            } else {
+                currX = e.clientX - canvas.offsetLeft;
+                currY = e.clientY - canvas.offsetTop + $(document).scrollTop();
+            }
+            draw();
+        }
+    }
 }
 
 function findxy(res, e) {
+    var rect = ctx.canvas.getBoundingClientRect();
     if (res == 'down') {
         prevX = currX;
         prevY = currY;
         currX = e.clientX - canvas.offsetLeft;
-        currY = e.clientY - canvas.offsetTop;
+        currY = e.clientY - canvas.offsetTop + $(document).scrollTop();
+        console.log("SCROLL TOP : ", $(document).scrollTop());
 
         flag = true;
         dot_flag = true;
@@ -118,22 +177,22 @@ function findxy(res, e) {
             prevX = currX;
             prevY = currY;
             currX = e.clientX - canvas.offsetLeft;
-            currY = e.clientY - canvas.offsetTop;
+            currY = e.clientY - canvas.offsetTop + $(document).scrollTop();
             draw();
         }
     }
 }
 
 function sendPointSuccess(msgType, msgData){
-	console.log("point sent ", msgData);
+    console.log("point sent ", msgData);
 }
 
 function sendPointFailure(errorCode, errorText){
-	console.log("error sending point ", errorText);
+    console.log("error sending point ", errorText);
 }
 
 function sendPoint(x, y){
-	console.log("INSIDE SENDING POINT: ", x, y);
-	easyrtc.sendPeerMessage("destination", "point", 
-		{x: x, y: y}, sendPointSuccess, sendPointFailure);
+    console.log("INSIDE SENDING POINT: ", x, y);
+    easyrtc.sendPeerMessage("destination", "point", 
+        {x: x, y: y, color: currentColor}, sendPointSuccess, sendPointFailure);
 }

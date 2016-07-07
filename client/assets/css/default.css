@@ -556,3 +556,9 @@ ul#rooms li{
     background:white;
     border:2px solid;
 }
+#no-room{
+    margin: 0 auto;
+    max-width: 400px;
+    display: none;
+    font-size: 4em;
+}
