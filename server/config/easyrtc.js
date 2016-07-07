@@ -8,6 +8,8 @@ export default function(easyrtc){
 	// enable creating room when NOT in existence (ff request from client)
 	easyrtc.setOption("roomAutoCreateEnable", true)
 	//easyrtc.setOption("appDefaultName", "easyrtc.AskAloud")
+	// disable creation of default room
+	easyrtc.setOption("roomDefaultEnable", false)
 
 	// Overriding the default easyrtcAuth listener, only so we can directly access its callback
 	easyrtc.events.on("easyrtcAuth", function(socket, easyrtcid, msg, socketCallback, callback) {

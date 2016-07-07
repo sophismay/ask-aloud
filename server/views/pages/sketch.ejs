@@ -48,6 +48,7 @@
             console.log("TOUCH DOWN; ", e);
         });
         canvas.addEventListener("touchmove", function(e){
+            //e.preventDefault();
             findTouchxy('move', e);
             console.log("TOUCH MOVE: ", e);
         });
@@ -102,13 +103,6 @@
             ctx.clearRect(0, 0, w, h);
             document.getElementById("canvasimg").style.display = "none";
         }
-    }
-    
-    function save() {
-        document.getElementById("canvasimg").style.border = "2px solid";
-        var dataURL = canvas.toDataURL();
-        document.getElementById("canvasimg").src = dataURL;
-        document.getElementById("canvasimg").style.display = "inline";
     }
 
     function findTouchxy(res, e){
@@ -230,7 +224,6 @@
 		<canvas id="can" width="500" height="400" tabindex="0"></canvas>
 
 		<div class="form-group">
-			<button id="btn" onclick="save()" class="btn btn-primary">Save</button>
         	<button id="clr" onclick="erase()" class="btn btn-default">Clear</button>	
 		</div>
 		

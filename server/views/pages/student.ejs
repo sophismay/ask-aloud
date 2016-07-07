@@ -136,39 +136,49 @@
           	rooms.innerHTML = '';
           	//  clone copies if more than 1
           	var roomsContainer;
-      		$("#room-article").css({display: "block"});
-      		
-      		var count = 0;
-      		var previousArticle;
-      		for(roomName in roomList){
-      			if(count === 0){
-      				// match the button and add listener
-      				$("#room-article div:last-child button").click(roomName, handleJoinClick);
-      				count += 1;
-      			} else {
-      				var roomArticle = $("#room-article").clone(false); // dont add event handlers
-      				// change id to match, then add click listener to button
-      				roomArticle.attr("id", "room-article-" + roomName);
-      				previousArticle = $("#room-article-"+roomName);
-      				
-      				var query = "#" + roomArticle.attr("id") + " div:last-child button";
-      				console.log("DIDNT MATHC? ", query, $(query));
-      				$("#rooms-list-container").append(roomArticle);
-      				// added after append, to take effect
-      				$(query).click(roomName, handleJoinClick);
-      				count += 1;
-      			}
+      		//$("#room-article").css({display: "block"});
+      		// show no rooms message if none available
+      		if(Object.keys(roomList).length < 1){
+      			$("#no-room").css({display: "block"});
+      		} else {
+      			$("#room-article").css({display: "block"});
+
+	      		var count = 0;
+	      		var previousArticle;
+	      		for(roomName in roomList){
+	      			if(count === 0){
+	      				// match the button and add listener
+	      				$("#room-article div:last-child button").click(roomName, handleJoinClick);
+	      				count += 1;
+	      			} else {
+	      				var roomArticle = $("#room-article").clone(false); // dont add event handlers
+	      				// change id to match, then add click listener to button
+	      				roomArticle.attr("id", "room-article-" + roomName);
+	      				previousArticle = $("#room-article-"+roomName);
+	      				
+	      				var query = "#" + roomArticle.attr("id") + " div:last-child button";
+	      				console.log("DIDNT MATHC? ", query, $(query));
+	      				$("#rooms-list-container").append(roomArticle);
+	      				// added after append, to take effect
+	      				$(query).click(roomName, handleJoinClick);
+	      				count += 1;
+	      			}
+	      		}
+	          	
+	          	// assign room names to blocks
+	          	var count = 0;
+			  	for(roomName in roomList) {
+		  			$(".room-name").each(function(i){
+	        			if(i === count){
+	        				console.log("SETTING ROOM NAME: ", roomName)
+	        				$(this).text(roomName);
+	        			}
+	        		});
+	        		count += 1;
+	          	}
       		}
-          	
-          	// assign room names to blocks
-          	var count = 0;
-		  	for(roomName in roomList) {
-            	$(".room-name").each(function(i){
-            		if(i === count)
-            			$(this).text(roomName);
-            	});
-            	count += 1;
-          	}
+      		
+      		
 		}
 
 		function getRoomListFailure(errorCode, errorText){
@@ -253,6 +263,9 @@
         	<div class="content-col-container" id="content-col-container">
               <div class="content-header">
                 <h4> Current Rooms</h4>
+                <div id="no-room">
+                	No Rooms Available
+                </div>
               </div>
               <div class="container" id="rooms-list-container">
               	<div class="event-article col-md-3" style="margin-left: 20px;" id="room-article">
