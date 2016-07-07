@@ -44,6 +44,10 @@ function initSketch() {
     canvas.addEventListener("touchmove", function(e){
         //e.preventDefault();
         findTouchxy('move', e);
+        // only send if there is a mouse click while moving
+        if(e.buttons === 1){
+            sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        }
         console.log("TOUCH MOVE: ", e);
     });
     canvas.addEventListener("touchend", function(e){
