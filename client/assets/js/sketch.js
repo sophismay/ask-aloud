@@ -209,5 +209,5 @@ function sendPoint(x, y, type){
 }
 
 function sendClearMessage(){
-        easyrtc.sendPeerMessage("destination", "clear", null, null, null);
-    }
+    easyrtc.sendPeerMessage("destination", "clear", null, null, null);
+}
