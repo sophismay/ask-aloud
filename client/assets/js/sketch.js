@@ -109,6 +109,7 @@ function erase() {
     if (m) {
         ctx.clearRect(0, 0, w, h);
         document.getElementById("canvasimg").style.display = "none";
+        sendClearMessage();
     }
 }
 
@@ -206,3 +207,7 @@ function sendPoint(x, y, type){
     easyrtc.sendPeerMessage("destination", type, 
         {x: x, y: y, color: currentColor}, sendPointSuccess, sendPointFailure);
 }
+
+function sendClearMessage(){
+        easyrtc.sendPeerMessage("destination", "clear", null, null, null);
+    }
