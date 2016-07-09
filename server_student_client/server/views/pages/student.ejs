@@ -124,12 +124,21 @@
         		id: "call-button-" + roomName,
         		click: function () { makeCallToLecturer(roomName); }
     		});
-			$("#room-article-"+ roomName +  " div:last-child span#call-btn-span").after(button);
+    		// handle the first case of room-article when join clicked
+    		if(localStorage.getItem("roomCount") == 1){
+    			$("#room-article div:last-child span#call-btn-span").after(button);
+    		} else {
+    			$("#room-article div:last-child span#call-btn-span").after(button);
+    			$("#room-article-"+ roomName +  " div:last-child span#call-btn-span").after(button);
+    		}
+			
 		}
 
 		function getRoomListSuccess(roomList){
 			// now list rooms in view
 			$(".sponsor-content-bg").css({"display":"block", marginTop: "-100px"});
+			localStorage.setItem("roomCount", Object.keys(roomList).length);
+			console.log("AFTER SETTING ROOM COUNT: ", localStorage.getItem("roomCount"));
 			console.log("roomLust", roomList);
           	var rooms = $("#rooms");
           	rooms.innerHTML = '';
@@ -147,6 +156,7 @@
 	      		for(roomName in roomList){
 	      			if(count === 0){
 	      				// match the button and add listener
+	      				//$("#room-article div:last-child button").click(roomName, handleJoinClick);
 	      				$("#room-article div:last-child button").click(roomName, handleJoinClick);
 	      				count += 1;
 	      			} else {
