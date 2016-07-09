@@ -15,33 +15,10 @@ export default function(app) {
   app.route('/:url(api|assets)/*')
    .get(errors[404])
 
-  app.route('/rtc')
-    .get((req, res) => { 
-    res.sendFile(path.resolve(app.get('appPath') + '/rtc.html'))
-    //res.render('pages/index')
-  }) 
-
   app.route('/student')
     .get( (req, res) => {
       res.render('pages/student')
-    })  
-
-  app.route('/lecturer')
-    .get( (req, res) => {
-      res.render('pages/lecturer')
-    })   
-
-  app.route('/sketch')
-    .get( (req, res) => {
-      res.render('pages/sketch')
-    })   
-
-  app.route('/lecturer2')
-    .get((req, res) => { 
-    res.sendFile(path.resolve(app.get('appPath') + '/lecturer.html')); 
-    //res.render('pages/index')
-  }) 
-
+    })    
 
   // All other routes should redirect to the index.html
   app.route('/*')
