@@ -10,7 +10,8 @@
         currX = 0,
         prevY = 0,
         currY = 0,
-        dot_flag = false;
+        dot_flag = false,
+        currentColor = "black";
 
     var x = "black",
         y = 2;
@@ -26,14 +27,16 @@
             //console.log("mouse move; ", e);
             // only send if there is a mouse click while moving
             if(e.buttons === 1){
-            	sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop());
+            	sendPoint(e.clientX - canvas.offsetLeft, 
+                    e.clientY - canvas.offsetTop + $(document).scrollTop(), "move");
             }
             
         }, false);
         canvas.addEventListener("mousedown", function (e) {
             findxy('down', e);
             console.log("mouse down; ", e);
-            console.log("mouse down points canvas ", e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop());
+            console.log("mouse down points canvas ", e.clientX - canvas.offsetLeft, 
+                e.clientY - canvas.offsetTop + $(document).scrollTop(), "down");
             var pos = $("#can").position();
             console.log("canvas position: ", pos);
             console.log("mouse down points actual ", e.clientX, e.clientY + $(document).scrollTop());
@@ -49,11 +52,15 @@
 
         canvas.addEventListener("touchstart", function(e){
             findTouchxy('down', e);
+            sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop(), "down");
             console.log("TOUCH DOWN; ", e);
         });
         canvas.addEventListener("touchmove", function(e){
             //e.preventDefault();
             findTouchxy('move', e);
+            if(e.buttons === 1){
+                sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop(), "move");
+            }
             console.log("TOUCH MOVE: ", e);
         });
         canvas.addEventListener("touchend", function(e){
@@ -66,24 +73,31 @@
         switch (obj.id) {
             case "green":
                 x = "green";
+                currentColor = "green";
                 break;
             case "blue":
                 x = "blue";
+                currentColor = "blue";
                 break;
             case "red":
                 x = "red";
+                currentColor = "red";
                 break;
             case "yellow":
                 x = "yellow";
+                currentColor = "yellow";
                 break;
             case "orange":
                 x = "orange";
+                currentColor = "orange";
                 break;
             case "black":
                 x = "black";
+                currentColor = "black";
                 break;
             case "white":
                 x = "white";
+                currentColor = "white";
                 break;
         }
         if (x == "white") y = 14;
@@ -194,14 +208,14 @@
     	console.log("error sending point ", errorText);
     }
 
-    function sendPoint(x, y){
+    function sendPoint(x, y, point){
         // send peer message depending on touch/mouse event
         var lecturerIds = easyrtc.usernameToIds("Lecturer");
         console.log("LECTURER ID DEBUG: ", lecturerIds);
 
     	console.log("INSIDE SENDING POINT: ", x, y);
-    	easyrtc.sendPeerMessage("destination", "point", 
-    		{x: x, y: y}, sendPointSuccess, sendPointFailure);
+    	easyrtc.sendPeerMessage("destination", type, 
+        {x: x, y: y, color: currentColor}, sendPointSuccess, sendPointFailure);
     }
     </script>
 	<header>
