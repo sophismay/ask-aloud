@@ -17,7 +17,6 @@ function initSketch() {
 
     canvas.addEventListener("mousemove", function (e) {
         findxy('move', e)
-        //console.log("mouse move; ", e);
         // only send if there is a mouse click while moving
         if(e.buttons === 1){
             sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop(), "move");
@@ -39,17 +38,21 @@ function initSketch() {
     }, false);
 
     canvas.addEventListener("touchstart", function(e){
+        //$(document).css({overflow: "hidden"});
         findTouchxy('down', e);
-        sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop(), "down");
+        sendPoint(e.targetTouches[0].pageX - canvas.offsetLeft, 
+            e.targetTouches[0].pageY - canvas.offsetTop + $(document).scrollTop(), "down");
+        //$(document).css({overflow: "scroll"});
         console.log("TOUCH DOWN; ", e);
     });
     canvas.addEventListener("touchmove", function(e){
         //e.preventDefault();
         findTouchxy('move', e);
         // only send if there is a mouse click while moving
-        if(e.buttons === 1){
-            sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop(), "move");
-        }
+        //$(document).css({overflow: "hidden"});
+        sendPoint(e.targetTouches[0].pageX - canvas.offsetLeft, 
+            e.targetTouches[0].pageY - canvas.offsetTop + $(document).scrollTop(), "move");
+        //$(document).css({overflow: "scroll"});
         console.log("TOUCH MOVE: ", e);
     });
     canvas.addEventListener("touchend", function(e){
@@ -105,12 +108,11 @@ function draw() {
 }
 
 function erase() {
-    var m = confirm("Want to clear");
-    if (m) {
-        ctx.clearRect(0, 0, w, h);
-        document.getElementById("canvasimg").style.display = "none";
-        sendClearMessage();
-    }
+    //var m = confirm("Want to clear");
+    //if (m) {
+    ctx.clearRect(0, 0, w, h);
+    sendClearMessage();
+    //}
 }
 
 function findTouchxy(res, e){
@@ -199,15 +201,16 @@ function sendPointFailure(errorCode, errorText){
 }
 
 function sendPoint(x, y, type){
-    console.log("INSIDE SENDING POINT: ", x, y);
 
     // send peer message depending on touch/mouse event
     var lecturerIds = easyrtc.usernameToIds("Lecturer");
     console.log("LECTURER ID DEBUG: ", lecturerIds);
-    easyrtc.sendPeerMessage("destination", type, 
+    easyrtc.sendPeerMessage(lecturerIds[0].easyrtcid, type, 
         {x: x, y: y, color: currentColor}, sendPointSuccess, sendPointFailure);
 }
 
 function sendClearMessage(){
-    easyrtc.sendPeerMessage("destination", "clear", null, null, null);
+    var lecturerIds = easyrtc.usernameToIds("Lecturer");
+    easyrtc.sendPeerMessage(lecturerIds[0].easyrtcid, "clear", 
+        null, sendPointSuccess, sendPointFailure);
 }

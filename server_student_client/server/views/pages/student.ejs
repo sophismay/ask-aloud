@@ -20,20 +20,6 @@
 			easyrtc.setVideoObjectSrc(audio, stream);
 		});
 
-		//TTK: create just one room which can embed many applications
-		// in this case, on lecture(created by lecturer)per application
-		// ** above is other way round I think **
-
-		// useful functions from doc, i think:
-		// appObj.createRoom
-		// enableDataChannel, sendPeerMessage, sendServerMessage, sendData, 
-		// setApplicationName, sendDataP2P, joinRoom, setPeerListener, 
-		// setServerListener, setUsername
-		// supportsGetUserMedia, supportsPeerConnections
-		// setCookieId, setCredential, setOnCall, setOnHangup
-		// setRoomApiField: can be used to set variables, and can be listed on
-		// setRoomOccupantListener, setSocketUrl
-
 		function openSketchModal(){
 
 		}
@@ -67,15 +53,28 @@
 
 			// create and enable sketch button which enables a modal on click
 			var button = $('<button/>', {
-        		text: "Sketch", //set text 1 to 10
-        		class: "btn btn-sm btn-primary",
+        		text: "Sketch", 
+        		class: "btn btn-sm btn-default",
         		id: "sketch-button-" + roomName,
         		click: function () { openSketchModal(); }
     		});
+    		console.log("AFTER BUTTON CREATION");
     		// set modal call attributes
     		button.attr("data-toggle", "modal");
     		button.attr("data-target", "#sketch-modal");
-			$("#room-article-"+ roomName +  " div:last-child span#call-btn-span").after(button);
+    		console.log("Button with attributes ", button);
+			//$("#room-article-"+ roomName +  " div:last-child span#call-btn-span").after(button);
+
+			// show modal dynamically
+			//$('#sketch-modal').modal('show');
+
+			// hide group list and show sketch modal
+			$(document).css({overflow: "hidden"});
+			$(".sponsor-content-bg").css({display: "none"});
+			$(".canvas-container").css({padding: 0});
+			$("#main-container").css({paddingTop: "0px"});
+			$("#sketch-container").css({display: "block"});
+			disableScroll();
 		}
 
 		function callLecturerFailure(errorCode, errorText){
@@ -91,12 +90,7 @@
 		}
 
 		function makeCallToLecturer(roomName){
-			// send to lecturer event "call_request", then make call
-			//easyrtc.sendPeerMessage(localStorage.getItem("LECTURER_ID"), "call_request", {callerId: localStorage.getItem("SELF_ID")}, 
-	  	  	//	sendCallerInfoSuccess, sendCallerInfoFailure);
-			//easyrtc.call(localStorage.getItem("LECTURER_ID"), 
-			//	callLecturerSuccess, callLecturerFailure, callLecturerAccepted);
-			var rsltArr = easyrtc.usernameToIds("Lecturer");
+			var rsltArr = easyrtc.usernameToIds("Lecturer", roomName);
 			console.log("LECTURER ID ", rsltArr);
 			easyrtc.call(rsltArr[0].easyrtcid, callLecturerSuccess, 
 				callLecturerFailure, callLecturerAccepted);
@@ -104,6 +98,8 @@
 
 		function roomJoinSuccess(roomName){
 			console.log("you have joined room " + roomName);
+			// debugging lecturer id
+			console.log("LECTURER ID ", easyrtc.usernameToIds("Lecturer", roomName));
 		}
 
 		function roomJoinFailure(errorCode, errorText){
@@ -119,7 +115,7 @@
 
 			// create call button dynamically 
 			var button = $('<button/>', {
-        		text: "Call", //set text 1 to 10
+        		text: "Call",
         		class: "btn btn-sm btn-default",
         		id: "call-button-" + roomName,
         		click: function () { makeCallToLecturer(roomName); }
@@ -144,7 +140,6 @@
           	rooms.innerHTML = '';
           	//  clone copies if more than 1
           	var roomsContainer;
-      		//$("#room-article").css({display: "block"});
       		// show no rooms message if none available
       		if(Object.keys(roomList).length < 1){
       			$("#no-room").css({display: "block"});
@@ -156,7 +151,6 @@
 	      		for(roomName in roomList){
 	      			if(count === 0){
 	      				// match the button and add listener
-	      				//$("#room-article div:last-child button").click(roomName, handleJoinClick);
 	      				$("#room-article div:last-child button").click(roomName, handleJoinClick);
 	      				count += 1;
 	      			} else {
@@ -186,7 +180,6 @@
 	        		count += 1;
 	          	}
       		}
-      		
       		
 		}
 
@@ -224,9 +217,6 @@
     		easyrtc.enableDebug(true);
     		// listen for whenever room_owner message is received
     		easyrtc.setPeerListener(roomOwnerListener, "room_owner");
-
-    		// commented out because we don't care about other students in the room for now
-    		//easyrtc.setRoomOccupantListener(convertListToButtons);
     		easyrtc.initMediaSource(
         		function(){        // success callback
             		easyrtc.connect("easyrtc.AskAloud", loginSuccess, loginFailure);
@@ -245,6 +235,29 @@
 			connect();
 		};
 
+		function preventDefault(e) {
+		  e = e || window.event;
+		  if (e.preventDefault)
+		      e.preventDefault();
+		  e.returnValue = false;  
+		}
+
+		function preventDefaultForScrollKeys(e) {
+		    if (keys[e.keyCode]) {
+		        preventDefault(e);
+		        return false;
+		    }
+		}
+
+		function disableScroll() {
+		  if (window.addEventListener) // older FF
+		      window.addEventListener('DOMMouseScroll', preventDefault, false);
+		  window.onwheel = preventDefault; // modern standard
+		  window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
+		  window.ontouchmove  = preventDefault; // mobile
+		  document.onkeydown  = preventDefaultForScrollKeys;
+		}
+
 
 	</script>
 	<header>
@@ -252,7 +265,7 @@
 	</header>
 	
 
-	<main style="min-height:600px;padding-top:150px;" class="container">
+	<main style="min-height:600px;padding-top:150px;" class="container" id="main-container">
 
 		<video id="callerAudio"></video>
 
@@ -263,12 +276,40 @@
   			</div>
 			<button id="connect-btn" onclick="connectAndRequest()" class="btn btn-primary">Connect</button>
 		</div>
-		<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#sketch-modal">
-  			Open Modal
-		</button>
+
+		<div class="" id="sketch-container">	
+    	  	<div class="container canvas-container">
+		<div class="tools-container">
+			Choose Color
+			<ul class="color-box-list">
+				<li class="color-box" id="green" onclick="color(this)"></li>
+				<li class="color-box" id="blue" onclick="color(this)"></li>
+				<li class="color-box" id="red" onclick="color(this)"></li>
+		        <li class="color-box" id="yellow" onclick="color(this)"></li>
+		        <li class="color-box" id="orange" onclick="color(this)"></li>
+		        <li class="color-box" id="black" onclick="color(this)"></li>
+			</ul>
+		</div>
+		
+		<div class="tools-container">
+			Eraser
+			<ul class="color-box-list">
+				<li class="color-box" id="white" onclick="color(this)"></li>
+			</ul>
+		</div>
+
+		<canvas id="can" width="500" height="400" tabindex="0"></canvas>
+
+		<div class="form-group">
+        	<button id="clr" onclick="erase()" class="btn btn-default">Clear</button>	
+		</div>
+		
+	</div>
+    	  	</div>
 
 		<div class="sponsor-content-bg">
     	  <div class="container">
+
         	<div class="content-col-container" id="content-col-container">
               <div class="content-header">
                 <h4> Current Rooms</h4>
@@ -361,6 +402,7 @@
 	  </div>
 	</div>
 
+	
 	<footer>
 		<% include ../partials/footer %>
 	</footer>

@@ -37,11 +37,11 @@
             sendPoint(e.clientX - canvas.offsetLeft, 
                     e.clientY - canvas.offsetTop + $(document).scrollTop(), "down");
             console.log("mouse down; ", e);
-            console.log("mouse down points canvas ", e.clientX - canvas.offsetLeft, 
-                e.clientY - canvas.offsetTop + $(document).scrollTop(), "down");
-            var pos = $("#can").position();
-            console.log("canvas position: ", pos);
-            console.log("mouse down points actual ", e.clientX, e.clientY + $(document).scrollTop());
+            //console.log("mouse down points canvas ", e.clientX - canvas.offsetLeft, 
+            //    e.clientY - canvas.offsetTop + $(document).scrollTop(), "down");
+            //var pos = $("#can").position();
+            //console.log("canvas position: ", pos);
+            //console.log("mouse down points actual ", e.clientX, e.clientY + $(document).scrollTop());
         }, false);
         canvas.addEventListener("mouseup", function (e) {
             findxy('up', e);
@@ -259,11 +259,6 @@
 		
 	</div>
 		
-        
-        
-        
-        
-        
         <img id="canvasimg" style="position:absolute;top:10%;left:52%;" style="display:none;">
         
 	</main>
