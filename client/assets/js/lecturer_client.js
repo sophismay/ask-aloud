@@ -61,3 +61,13 @@ function acceptCall(easyrtcid) {
 	var f = requests[easyrtcid];
 	f();
 }
+
+easyrtc.setPeerListener( function(easyrtcid, msgType, msgData, targeting) {
+	bridge.draw("point", msgData.color, msgData.x, msgData.y);
+    }, 'move');
+easyrtc.setPeerListener( function(easyrtcid, msgType, msgData, targeting) {
+	bridge.draw("down", msgData.color, msgData.x, msgData.y);
+    }, 'down');
+easyrtc.setPeerListener( function(easyrtcid, msgType, msgData, targeting) {
+	bridge.clear();
+    }, 'clear');
