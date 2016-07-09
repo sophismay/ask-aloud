@@ -34,6 +34,8 @@
         }, false);
         canvas.addEventListener("mousedown", function (e) {
             findxy('down', e);
+            sendPoint(e.clientX - canvas.offsetLeft, 
+                    e.clientY - canvas.offsetTop + $(document).scrollTop(), "down");
             console.log("mouse down; ", e);
             console.log("mouse down points canvas ", e.clientX - canvas.offsetLeft, 
                 e.clientY - canvas.offsetTop + $(document).scrollTop(), "down");
@@ -208,12 +210,13 @@
     	console.log("error sending point ", errorText);
     }
 
-    function sendPoint(x, y, point){
+    function sendPoint(x, y, type){
         // send peer message depending on touch/mouse event
         var lecturerIds = easyrtc.usernameToIds("Lecturer");
         console.log("LECTURER ID DEBUG: ", lecturerIds);
 
     	console.log("INSIDE SENDING POINT: ", x, y);
+        // TODO: change destination to lecturer id
     	easyrtc.sendPeerMessage("destination", type, 
         {x: x, y: y, color: currentColor}, sendPointSuccess, sendPointFailure);
     }
