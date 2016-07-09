@@ -26,13 +26,17 @@
             //console.log("mouse move; ", e);
             // only send if there is a mouse click while moving
             if(e.buttons === 1){
-            	//sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            	sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop());
             }
             
         }, false);
         canvas.addEventListener("mousedown", function (e) {
             findxy('down', e);
             console.log("mouse down; ", e);
+            console.log("mouse down points canvas ", e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop());
+            var pos = $("#can").position();
+            console.log("canvas position: ", pos);
+            console.log("mouse down points actual ", e.clientX, e.clientY + $(document).scrollTop());
         }, false);
         canvas.addEventListener("mouseup", function (e) {
             findxy('up', e);
@@ -191,6 +195,10 @@
     }
 
     function sendPoint(x, y){
+        // send peer message depending on touch/mouse event
+        var lecturerIds = easyrtc.usernameToIds("Lecturer");
+        console.log("LECTURER ID DEBUG: ", lecturerIds);
+
     	console.log("INSIDE SENDING POINT: ", x, y);
     	easyrtc.sendPeerMessage("destination", "point", 
     		{x: x, y: y}, sendPointSuccess, sendPointFailure);

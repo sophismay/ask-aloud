@@ -20,12 +20,13 @@ function initSketch() {
         //console.log("mouse move; ", e);
         // only send if there is a mouse click while moving
         if(e.buttons === 1){
-            sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop(), "move");
         }
         
     }, false);
     canvas.addEventListener("mousedown", function (e) {
         findxy('down', e);
+        sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop(), "down");
         console.log("mouse down; ", e);
     }, false);
     canvas.addEventListener("mouseup", function (e) {
@@ -39,6 +40,7 @@ function initSketch() {
 
     canvas.addEventListener("touchstart", function(e){
         findTouchxy('down', e);
+        sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop(), "down");
         console.log("TOUCH DOWN; ", e);
     });
     canvas.addEventListener("touchmove", function(e){
@@ -46,7 +48,7 @@ function initSketch() {
         findTouchxy('move', e);
         // only send if there is a mouse click while moving
         if(e.buttons === 1){
-            sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop(), "move");
         }
         console.log("TOUCH MOVE: ", e);
     });
@@ -195,8 +197,12 @@ function sendPointFailure(errorCode, errorText){
     console.log("error sending point ", errorText);
 }
 
-function sendPoint(x, y){
+function sendPoint(x, y, type){
     console.log("INSIDE SENDING POINT: ", x, y);
-    easyrtc.sendPeerMessage("destination", "point", 
+
+    // send peer message depending on touch/mouse event
+    var lecturerIds = easyrtc.usernameToIds("Lecturer");
+    console.log("LECTURER ID DEBUG: ", lecturerIds);
+    easyrtc.sendPeerMessage("destination", type, 
         {x: x, y: y, color: currentColor}, sendPointSuccess, sendPointFailure);
 }
