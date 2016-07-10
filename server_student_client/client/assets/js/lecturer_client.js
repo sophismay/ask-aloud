@@ -2,6 +2,7 @@ var selfEasyrtcid = "";
 
 var requests = {}
 
+// easyrtc setup, server connection and room join
 function connect(roomName) {
     console.log("Initializing.");
     easyrtc.enableVideo(false);
@@ -9,7 +10,6 @@ function connect(roomName) {
     easyrtc.enableVideoReceive(false);
 	easyrtc.setUsername("Lecturer");
 	easyrtc.joinRoom(roomName, null, joinSuccess, joinFailure);
-    //easyrtc.setRoomOccupantListener(convertListToButtons);
 	easyrtc.connect("easyrtc.AskAloud", loginSuccess, loginFailure);
 
 }
@@ -17,13 +17,10 @@ function connect(roomName) {
 function hangup() {
     easyrtc.hangupAll();
 }
-
+// set global easyrtcid
+// bridge is a wrapper using c#
 function loginSuccess(easyrtcid) {
-    //disable("connectButton");
-    // enable("disconnectButton");
-    //enable('otherClients');
     selfEasyrtcid = easyrtcid;
-    //document.getElementById("iam").innerHTML = "I am " + easyrtcid;
 	bridge.loginSuccess(easyrtcid);
 }
 
@@ -38,12 +35,13 @@ function joinSuccess(roomName) {
 function joinFailure(errorCode, errorText, roomName) {
 	easyrtc.showError(errorCode, errorText);
 }
-
+// element to accept incoming stream
 easyrtc.setStreamAcceptor( function(easyrtcid, stream) {
     var audio = document.getElementById('callerAudio');
     easyrtc.setVideoObjectSrc(audio,stream);
 });
 
+// check if call was accepted and establish audio stream
 easyrtc.setAcceptChecker(function(easyrtcid, callback) {
     var acceptTheCall = function(wasAccepted) {
         if( wasAccepted && easyrtc.getConnectionCount() > 0 ) {
@@ -62,6 +60,7 @@ function acceptCall(easyrtcid) {
 	f();
 }
 
+// listeners for sketch coordinates and also when sketch is cleared
 easyrtc.setPeerListener( function(easyrtcid, msgType, msgData, targeting) {
 	bridge.draw("point", msgData.color, msgData.x, msgData.y);
     }, 'move');

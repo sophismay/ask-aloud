@@ -9,6 +9,7 @@ var canvas, ctx, flag = false,
 var x = "black",
     y = 2;
 
+// initialize canvas and set up mouse and touch listeners
 function initSketch() {
     canvas = document.getElementById('can');
     ctx = canvas.getContext("2d");
@@ -26,41 +27,30 @@ function initSketch() {
     canvas.addEventListener("mousedown", function (e) {
         findxy('down', e);
         sendPoint(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop + $(document).scrollTop(), "down");
-        console.log("mouse down; ", e);
     }, false);
     canvas.addEventListener("mouseup", function (e) {
         findxy('up', e);
-        console.log("mouse up; ", e);
     }, false);
     canvas.addEventListener("mouseout", function (e) {
         findxy('out', e);
-        console.log("mouse out; ", e);
     }, false);
-
+    // mobile-specific touch events
     canvas.addEventListener("touchstart", function(e){
-        //$(document).css({overflow: "hidden"});
         findTouchxy('down', e);
         sendPoint(e.targetTouches[0].pageX - canvas.offsetLeft, 
             e.targetTouches[0].pageY - canvas.offsetTop + $(document).scrollTop(), "down");
-        //$(document).css({overflow: "scroll"});
-        console.log("TOUCH DOWN; ", e);
     });
     canvas.addEventListener("touchmove", function(e){
-        //e.preventDefault();
         findTouchxy('move', e);
-        // only send if there is a mouse click while moving
-        //$(document).css({overflow: "hidden"});
         sendPoint(e.targetTouches[0].pageX - canvas.offsetLeft, 
             e.targetTouches[0].pageY - canvas.offsetTop + $(document).scrollTop(), "move");
-        //$(document).css({overflow: "scroll"});
-        console.log("TOUCH MOVE: ", e);
     });
     canvas.addEventListener("touchend", function(e){
         findTouchxy('up', e);
         console.log("TOUCH END; ", e);
     });
 }
-
+// set current color whenever a color element is clicked
 function color(obj) {
     switch (obj.id) {
         case "green":
@@ -96,7 +86,7 @@ function color(obj) {
     else y = 2;
 
 }
-
+// draw on canvas
 function draw() {
     ctx.beginPath();
     ctx.moveTo(prevX, prevY);
@@ -106,15 +96,12 @@ function draw() {
     ctx.stroke();
     ctx.closePath();
 }
-
+// clear canvas
 function erase() {
-    //var m = confirm("Want to clear");
-    //if (m) {
     ctx.clearRect(0, 0, w, h);
     sendClearMessage();
-    //}
 }
-
+// setting x, y coordinates for touch/mobile devices and draw
 function findTouchxy(res, e){
     if(res == "down"){
         prevX = currX;
@@ -158,7 +145,7 @@ function findTouchxy(res, e){
         }
     }
 }
-
+// setting x,y coordinates and draw
 function findxy(res, e) {
     var rect = ctx.canvas.getBoundingClientRect();
     if (res == 'down') {
@@ -166,7 +153,6 @@ function findxy(res, e) {
         prevY = currY;
         currX = e.clientX - canvas.offsetLeft;
         currY = e.clientY - canvas.offsetTop + $(document).scrollTop();
-        console.log("SCROLL TOP : ", $(document).scrollTop());
 
         flag = true;
         dot_flag = true;
@@ -199,7 +185,7 @@ function sendPointSuccess(msgType, msgData){
 function sendPointFailure(errorCode, errorText){
     console.log("error sending point ", errorText);
 }
-
+// send point to lecturer/peer
 function sendPoint(x, y, type){
 
     // send peer message depending on touch/mouse event
@@ -208,7 +194,7 @@ function sendPoint(x, y, type){
     easyrtc.sendPeerMessage(lecturerIds[0].easyrtcid, type, 
         {x: x, y: y, color: currentColor}, sendPointSuccess, sendPointFailure);
 }
-
+// send clear message to lecturer/peer
 function sendClearMessage(){
     var lecturerIds = easyrtc.usernameToIds("Lecturer");
     easyrtc.sendPeerMessage(lecturerIds[0].easyrtcid, "clear", 
