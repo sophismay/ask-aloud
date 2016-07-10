@@ -4,21 +4,22 @@
 
 'use strict';
 
+// import dependencies and configuration
 import express from 'express';
 import easyrtc from 'easyrtc'
 import config from './config/environment';
 import http from 'http';
 
 
-// Setup server
+// Setup server and socket
 var app = express();
 var server = http.createServer(app).listen(config.port);
-// for older version
 var io = require('socket.io');
 var socketio = io.listen(server, {
   "log level": 1
 });
 
+// include routes, express middleware and easyrtc server middleware 
 require('./config/express').default(app);
 require('./routes').default(app);
 require('./config/easyrtc').default(easyrtc);

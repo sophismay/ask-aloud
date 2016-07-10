@@ -18,8 +18,6 @@ import config from './environment';
 import passport from 'passport';
 import session from 'express-session';
 import connectMongo from 'connect-mongo';
-//import mongoose from 'mongoose';
-//var MongoStore = connectMongo(session);
 
 export default function(app) {
   var env = app.get('env');
@@ -31,14 +29,12 @@ export default function(app) {
   if (env === 'production') {
     app.use(favicon(path.join(config.root, 'client', 'favicon.ico')));
   }
-
+  // express middleware configuration
   app.set('appPath', path.join(config.root, 'client'));
   app.use(express.static(app.get('appPath')));
   app.use(morgan('dev'));
-
+  // setup view engine
   app.set('views', config.root + '/server/views');
-  //app.engine('html', require('ejs').renderFile);
-  //app.set('view engine', 'html');
   app.engine('ejs', require('ejs').renderFile);
   app.set('view engine', 'ejs');
   app.use(compression());
@@ -48,38 +44,7 @@ export default function(app) {
   app.use(cookieParser());
   app.use(passport.initialize());
 
-  // Persist sessions with MongoStore / sequelizeStore
-  // We need to enable sessions for passport-twitter because it's an
-  // oauth 1.0 strategy, and Lusca depends on sessions
-  /*app.use(session({
-    secret: config.secrets.session,
-    saveUninitialized: true,
-    resave: false,
-    store: new MongoStore({
-      mongooseConnection: mongoose.connection,
-      db: 'csapp'
-    })
-  }));*/
-
-  /**
-   * Lusca - express server security
-   * https://github.com/krakenjs/lusca
-   */
-  /*if (env !== 'test' && !process.env.SAUCE_USERNAME) {
-    app.use(lusca({
-      csrf: {
-        angular: true
-      },
-      xframe: 'SAMEORIGIN',
-      hsts: {
-        maxAge: 31536000, //1 year, in seconds
-        includeSubDomains: true,
-        preload: true
-      },
-      xssProtection: true
-    }));
-  }*/
-
+  // use server livereload only under dev environment
   if ('development' === env) {
     app.use(require('connect-livereload')({
       ignore: [
