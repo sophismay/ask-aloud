@@ -20,10 +20,14 @@ export default function(app) {
       res.render('pages/student')
     })    
 
+  app.route('/lecture2')
+    .get( (req, res) => {
+      res.sendFile(path.resolve(app.get('appPath') + '/lecturer.html'));
+    })   
+
   // All other routes should redirect to the index.html
   app.route('/*')
     .get((req, res) => {
-      //res.sendFile(path.resolve(app.get('appPath') + '/rtc.html'));
       res.render('pages/index')
     })
 }

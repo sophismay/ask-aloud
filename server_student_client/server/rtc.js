@@ -26,7 +26,7 @@ const rtc = (easyrtc, app, socketio) => {
             askAloudApp
         );
 
-
+        // override room create event
     	rtcRef.events.on("roomCreate", function(appObj, creatorConnectionObj, roomName, roomOptions, callback) {
         	console.log("roomCreate fired! Trying to create: " + roomName);
         	console.log("room name ", roomName)
@@ -34,7 +34,7 @@ const rtc = (easyrtc, app, socketio) => {
 			console.log("creator connection object ", creatorConnectionObj)
         	appObj.events.defaultListeners.roomCreate(appObj, creatorConnectionObj, roomName, roomOptions, callback);
     	});
-
+        // override room join event
     	rtcRef.events.on("roomJoin", function(connectionObj, roomName, roomParameter, callback) {
 	    	console.log("["+connectionObj.getEasyrtcid()+"] Credential retrieved!", connectionObj.getFieldValueSync("credential"));
 	    	easyrtc.events.defaultListeners.roomJoin(connectionObj, roomName, roomParameter, callback);
