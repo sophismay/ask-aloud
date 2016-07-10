@@ -23,7 +23,6 @@
         /// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
         /// </summary>
         private void InitializeComponent() {
-            this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.label1 = new System.Windows.Forms.Label();
             this.lblID = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -35,21 +34,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.cmdConnect = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.toolStripContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // toolStripContainer1
-            // 
-            // 
-            // toolStripContainer1.ContentPanel
-            // 
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(941, 72);
-            this.toolStripContainer1.Location = new System.Drawing.Point(12, 485);
-            this.toolStripContainer1.Name = "toolStripContainer1";
-            this.toolStripContainer1.Size = new System.Drawing.Size(941, 97);
-            this.toolStripContainer1.TabIndex = 3;
-            this.toolStripContainer1.Text = "toolStripContainer1";
             // 
             // label1
             // 
@@ -182,14 +168,11 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.lblID);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.toolStripContainer1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Ask Aloud";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.toolStripContainer1.ResumeLayout(false);
-            this.toolStripContainer1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -197,7 +180,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblID;
         private System.Windows.Forms.Label label2;
